@@ -1,0 +1,80 @@
+// TimingAPI
+
+
+<!-- 
+    many 
+        - never (forEach)
+        - onUserInput (while !isInputPending)
+        - onTasks (queueNextTask(), will handle eventLoop concurrently)
+
+    one
+        - sync (called immediately)
+        - microtask (queueMicrotask)
+        - task (setTimeout)
+        - frame (requestAnimationFrame)
+            - after (requestAnimationFrame => setTimeout)
+        - idle (requestIdleCallback)
+ -->
+
+// // Job Sequence
+// batch // .forEach(fn)
+// yield // (mode, hold = () => isInputPending) => while( !hold() && cs.length){fn()} mode(yield(mode, hold)(fn)(cs))
+// recur // (mode) => ([c, ...cs]) => {c && timing[mode](() => (c(), recur(mode)(cs)))}
+ 
+
+// // MODES
+// // sync call 
+// sync
+// sync.last
+// sync.once
+
+// // before frame
+// tick
+// tick.last
+// tick.once
+
+// // queue task
+// task
+// task.last
+// task.once
+
+// // when cpu idle
+// idle
+// idle.last
+// idle.once
+
+// // after current task
+// then
+// then.last
+// then.once
+
+// // wait x ms
+// wait
+// wait.last
+// wait.once
+
+
+// // after the frame
+// tick(task(fn))(arg, ...s) === after this frame, fn(arg, ...s)
+
+// // next frame
+// tick(tick(fn))(arg, ...s) ==== frame after next-frame, fn(arg, ...s)
+
+
+capture: batch(sync)(callback, combineArgsOfMultipleCalls)(iterable, args)
+noArgs: batch(frame.once)(callback, combineArgsOfMultipleCalls)(iterable, args)
+passive: yield(idle.once, isInputPending)(callback, combineArgsOfMultipleCalls)(iterable, args)
+
+{   
+    details: [ "insert", "update", "remove", "manual", "create", "delete" ],
+    target // added during batch,
+    attr: {
+        class:[],
+        data-text: [],
+        etc: [],
+    }
+}
+
+if (Math.max(plugin.function.length) < 2) skip using a map, just use set.
+just pass amended elements to plugin fn.
+
