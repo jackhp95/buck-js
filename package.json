@@ -1,16 +1,21 @@
 {
-  "name": "buck",
-  "version": "1.0.0",
+  "name": "@jackhp95/buck",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "index": "esbuild src/index.js --bundle --minify --sourcemap --format='esm' --outfile='dist/index.js'",
+    "utils": "esbuild src/utils.js --bundle --minify --sourcemap --format='esm' --outfile='dist/utils.js'",
+    "graph": "esbuild src/graph.js --bundle --minify --sourcemap --format='esm' --outfile='dist/graph.js'",
+    "ondom": "esbuild src/ondom.js --bundle --minify --sourcemap --format='esm' --outfile='dist/ondom.js'",
+    "orca": "esbuild src/orca.js --bundle --minify --sourcemap --format='esm' --outfile='dist/orca.js'",
+    "all": "npm run graph && npm run ondom && npm run utils && npm run index && npm run orca"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jackhp95/buck-js.git"
   },
-  "author": "",
+  "author": "Jack H. Peterson",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/jackhp95/buck-js/issues"
