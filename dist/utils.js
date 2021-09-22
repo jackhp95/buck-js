@@ -1,0 +1,2 @@
+var r=o=>t=>{for(let e of t)o(e)},N=o=>(console.log(o),o),s=(o,t=document)=>t.querySelectorAll(o),O=o=>o.tagName?o:o.parentElement,c=(o,...t)=>o(...t),n=(o,t)=>{if(o===t)return 0;var e=o.compareDocumentPosition(t);return e&Node.DOCUMENT_POSITION_FOLLOWING||e&Node.DOCUMENT_POSITION_CONTAINED_BY?-1:e&Node.DOCUMENT_POSITION_PRECEDING||e&Node.DOCUMENT_POSITION_CONTAINS?1:0},I=o=>("sort"in o?o:[...o]).sort(n);export{s as QSA,O as asEl,c as invoke,N as log,r as loop,I as sortEls};
+//# sourceMappingURL=utils.js.map
