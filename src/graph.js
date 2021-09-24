@@ -59,8 +59,8 @@ const Graph = (entries = []) => {
     },
     nodes: () => new Set(g.keys()),
     edges: () => {
-      const e = new Map();
-      g.forEach(([k, vs]) => vs.forEach((v) => e.set(k, v)));
+      const e = [];
+      g.forEach((vs, k) => vs.forEach((v) => e.push([k, v])));
       return e;
     },
     tidy: () => {

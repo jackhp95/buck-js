@@ -1,0 +1,35 @@
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta
+            http-equiv="X-UA-Compatible"
+            content="IE=edge"
+        >
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <title>Hello World</title>
+    </head>
+
+    <body>
+        <h1 hello-world></h1>
+
+        <script type="module">
+            // import { onDom } from "https://cdn.skypack.dev/@jackhp95/buck/dist/ondom.js";
+            import { onDom, perf } from "/dist/index.js";
+            const onDomConfig = {
+                plugins: [{
+                    select: "[hello-world]",
+                    update: (el) => {
+                        (el.textContent !== "Hello World") && (el.textContent = "Hello World")
+                    }
+                }]
+            };
+
+            perf(onDom, "onDom")(onDomConfig);
+        </script>
+    </body>
+
+</html>

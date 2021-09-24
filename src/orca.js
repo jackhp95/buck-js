@@ -12,15 +12,11 @@ const extendFunction = (fn, obj) =>
       return fn(...args);
     },
   });
-
+const rootMap = new Map();
 // Timing a bunch of jobs.
 // the shape kinda looks like this
 // {[root]: {[sequence]: {[timing]: {[fn]: [args]}}}}
-function sequencer(sequence) {
-  if (!this.rootMap) {
-    this.rootMap = new Map();
-  }
-  const rootMap = this.rootMap;
+function sequencer(sequence) {  
   if (!rootMap.has(sequence)) rootMap.set(sequence, new Map());
   const seqMap = rootMap.get(sequence);
   const upsertTiming = (timing) => {

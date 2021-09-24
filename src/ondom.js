@@ -1,7 +1,7 @@
 import { Graph } from "./graph.js";
 import { log, loop, QSA, asEl, sortEls, invoke } from "./utils.js";
 
-const onDom = (c) => {
+const onDom = async (c) => {
   // STATE
   const config = {
     root: c.root || document,
@@ -27,39 +27,12 @@ const onDom = (c) => {
     queue: new Set(), // contents updated
     after: new Set(), // contents updated
     plugins: new Set(c.plugins || []),
-    active: new Set(),
     allSelect: "*",
   };
   // SETUP
-  const maybeActivatePlugin = (p) => {
-    let init;
-    if (p.media) {
-      init = matchMedia(p.media);
-    }
-    const checkRelevance = (when) => {
-      if (when.matches) {
-        state.active.add(p);
-        initPlugin(p);
-      } else {
-        if (state.graph.has(p)) {
-          state.graph.get(p).forEach(p.update);
-          state.graph.delete(p);
-          state.active.delete(p);
-        }
-      }
-    };
-    if (init) {
-      checkRelevance(init);
-      // ideally, this would be responsive.
-      // yet it isn't, and I don't wanna debug tonight.
-      init.addEventListener("changes", checkRelevance);
-    } else {
-      state.active.add(p);
-      initPlugin(p);
-    }
-  };
+
   const refreshAllSelect = () => {
-    state.allSelect = [...state.active].map((p) => p.select).join();
+    state.allSelect = [...state.plugins].map((p) => p.select).join();
   };
   const clearRuntime = () => {
     state.match.clear();
@@ -74,8 +47,8 @@ const onDom = (c) => {
     }
   };
   const runUpdate = (el) => {
-    if (!state.graph.has(el)) return console.log(el, "doesn't have a plugin");
     const plugins = state.graph.get(el);
+    if (!plugins) return;
     loop((p) => p.update(el))(plugins);
     // remove element from graph if it doesn't exist after the update.
     state.after.add(deleteFromGraph(el));
@@ -102,7 +75,7 @@ const onDom = (c) => {
       state.queue.add(el);
     }
   };
-  const matchElement = (el) => [...state.active].map(maybeEdge(el));
+  const matchElement = (el) => [...state.plugins].map(maybeEdge(el));
   const queryElement = (el) => {
     // self matches
     (el.matches(state.allSelect) || state.graph.has(el)) && state.match.add(el);
@@ -139,38 +112,38 @@ const onDom = (c) => {
     state.graph.set(p)(el);
     p.update(el);
   };
-  const initPlugin = (p) => {
-    refreshAllSelect();
-    loop(initElement(p))(QSA(p.select, config.root));
-  };
-
-  // Initialize
-  config.scheduleInit(() => {
-    state.plugins.forEach(maybeActivatePlugin);
-    observer.observe(config.root, observerConfig);
-  });
+  const initPlugin = (p) => loop(initElement(p))(QSA(p.select, config.root));
 
   // API
-  const MAIN_FUNCTION = (x) => [...state.graph.get(x)];
-  const METHODS = {
-    add: (p) => {
-      state.plugins.add(p);
-      maybeActivatePlugin(p);
-    },
-    clear: () => {
-      clearRuntime();
-      state.graph.clear();
-    },
-    delete: (p) => {
-      state.plugins.delete(p);
-      state.graph.delete(p);
-    },
-    has: (p) => state.graph.has(p),
-    active: () => [...state.active],
-  };
-  const API = Object.assign(MAIN_FUNCTION, METHODS);
+  const returnAPI = () => {
+    const MAIN_FUNCTION = (x) => [...state.graph.get(x)];
+    const METHODS = {
+      add: (p) => {
+        state.plugins.add(p);
+        initPlugin(p);
+      },
+      clear: () => {
+        clearRuntime();
+        state.graph.clear();
+      },
+      delete: (p) => {
+        state.plugins.delete(p);
+        state.graph.delete(p);
+      },
+      has: (p) => state.graph.has(p),
+    };
+    const API = Object.assign(MAIN_FUNCTION, METHODS);
+    return c.debug ? Object.assign(API, { debug: state }) : API;
+  }
 
-  return c.debug ? Object.assign(API, { debug: state }) : API;
+  const initDOM = async (resolve) => {
+    loop(initPlugin)(state.plugins);
+    refreshAllSelect();
+    observer.observe(config.root, observerConfig);
+    resolve(returnAPI());
+  };
+  // Initialize
+  return new Promise((r) => config.scheduleInit(() => initDOM(r)));
 };
 
 export { onDom };
