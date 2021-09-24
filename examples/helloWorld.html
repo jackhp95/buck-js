@@ -13,12 +13,15 @@
         <title>Hello World</title>
     </head>
 
-    <body>
+    <body class="min-h-screen w-full bg-black text-white flex items-center justify-center text-4xl">
         <h1 hello-world></h1>
 
         <script type="module">
             // import { onDom } from "https://cdn.skypack.dev/@jackhp95/buck/dist/ondom.js";
+            import { setup } from "https://jackhpeterson.com/__/esm/twind/shim.js";
             import { onDom, perf } from "/dist/index.js";
+            setup();
+
             const onDomConfig = {
                 plugins: [{
                     select: "[hello-world]",
