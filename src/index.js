@@ -1,5 +1,5 @@
 import { Graph } from "./graph.js";
-import { log, loop, QSA, asEl, sortEls, invoke, perf } from "./utils.js";
+import { log, loop, QSA, QS, asEl, sortEls, invoke, perf } from "./utils.js";
 import { onDom } from "./ondom.js";
 import {
   extendFunction,
@@ -21,6 +21,7 @@ export {
   loop,
   log,
   QSA,
+  QS,
   asEl,
   sortEls,
   perf,

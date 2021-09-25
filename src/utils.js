@@ -5,6 +5,7 @@ const loop = (fn) => (xs) => {
 };
 const log = (x) => (console.log(x), x);
 const QSA = (sel, el = document) => el.querySelectorAll(sel);
+const QS = (sel, el = document) => el.querySelector(sel);
 const asEl = (node) => (node.tagName ? node : node.parentElement);
 const invoke = (fn, ...args) => fn(...args);
 const perf = (fn, _name) => async (...args) => {
@@ -38,4 +39,4 @@ const documentPositionComparator = (a, b) => {
 const sortEls = (els) =>
   ("sort" in els ? els : [...els]).sort(documentPositionComparator);
 
-export { loop, log, QSA, asEl, sortEls, invoke, perf };
+export { loop, log, QSA, QS, asEl, sortEls, invoke, perf };
