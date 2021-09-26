@@ -16,7 +16,7 @@ const rootMap = new Map();
 // Timing a bunch of jobs.
 // the shape kinda looks like this
 // {[root]: {[sequence]: {[timing]: {[fn]: [args]}}}}
-function sequencer(sequence) {  
+function sequencer(sequence) {
   if (!rootMap.has(sequence)) rootMap.set(sequence, new Map());
   const seqMap = rootMap.get(sequence);
   const upsertTiming = (timing) => {
@@ -70,8 +70,9 @@ const orca = (timing) => (fn) => {
       me.throttled = true;
     };
   };
-
-  return function (...args) {
+  const thisCtx = {fn: undefined}
+  const nestedFn = (...a) => thisCtx.fn(...a);
+  const returnFn = (...args) => {
     me.args = args;
     // this only puts a date if this has been previously declared as true.
     if (me.debounce) {
@@ -100,8 +101,10 @@ const orca = (timing) => (fn) => {
       me.throttle();
     }
     const resultPromise = new Promise(resolve(me.debounce));
-    return extendFunction(this, Object.assign(resultPromise, me));
+    return extendFunction(nestedFn, Object.assign(resultPromise, me));
   };
+  thisCtx.fn = returnFn;
+  return returnFn;
 };
 
 const sync = orca((fn) => fn);

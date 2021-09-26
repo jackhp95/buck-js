@@ -1,0 +1,102 @@
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta
+            http-equiv="X-UA-Compatible"
+            content="IE=edge"
+        >
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <title>viewport</title>
+
+        <script type="module">
+            import { setup } from "https://jackhpeterson.com/__/esm/twind/shim.js";
+            import { onDom, perf, QSA, QS, loop, attr } from "/src/index.js";
+            setup();
+            const viewportPlugins = () => {
+                // X Center 
+                const configXCenter = [loop(attr.entry("on-x-center")), { rootMargin: "-50% 0px" }]
+                const onXCenter = new IntersectionObserver(...configXCenter);
+                const XCenterSet = new Set();
+                const pluginXCenter = {
+                    select: "[on-x-center]",
+                    update: (el) => {
+                        if (el.isConnected && el.hasAttribute("on-x-center")){
+                            if (!XCenterSet.has(el)){
+                                onXCenter.observe(el);
+                                XCenterSet.add(el);
+                            }
+                        } else {
+                            onXCenter.unobserve(el)
+                            XCenterSet.delete(el);
+                        }
+                    }
+                };
+                // On Screen
+                const configScreen = [loop(attr.entry("on-screen"))]
+                const onScreen = new IntersectionObserver(...configScreen);
+                const ScreenSet = new Set();
+                const pluginScreen = {
+                    select: "[on-screen]",
+                    update: (el) => {
+                        if (el.isConnected && el.hasAttribute("on-screen")){
+                            if (!ScreenSet.has(el)){
+                                onScreen.observe(el);
+                                ScreenSet.add(el);
+                            }
+                        } else {
+                            onScreen.unobserve(el)
+                            ScreenSet.delete(el);
+                        }
+                    }
+                };
+                return [pluginXCenter, pluginScreen];
+            }
+
+            const onDomConfig = {
+                plugins: [...viewportPlugins()]
+            };
+
+            perf(onDom, "onDom")(onDomConfig);
+        </script>
+
+    </head>
+
+    <body class="min-h-screen w-full">
+        <header class="bg-black text-white px-4 md:p-12 lg:p-16">
+            <h1 class="text-5xl">Viewport Plugins</h1>
+            <p>onDom in conjunction with IntersectionObserver makes it easy to tap into screen presence.</p>
+        </header>
+        <hr class="inset-y-1/2 fixed w-full text-green-500 border-current">
+        <main>
+            <section class="h-screen w-full flex flex-col gap-4 items-center justify-center px-4 md:p-12 lg:p-16">
+                <p class="transition duration-500 text-lg" on-x-center="this.classList[entry.isIntersecting ? 'add' : 'remove']('text-red-500')">
+                    I'll turn Red when vertically centered
+                </p>
+                <p class="transition duration-500 text-lg" on-screen="this.classList[entry.isIntersecting ? 'add' : 'remove']('text-red-500')">
+                    I'll turn Red on screen
+                </p>
+            </section>
+            <section class="h-screen w-full flex flex-col gap-4 items-center justify-center px-4 md:p-12 lg:p-16">
+                <p class="transition duration-500 text-lg" on-x-center="this.classList[entry.isIntersecting ? 'add' : 'remove']('text-blue-500')">
+                    I'll turn Blue when vertically centered
+                </p>
+                <p class="transition duration-500 text-lg" on-screen="this.classList[entry.isIntersecting ? 'add' : 'remove']('text-blue-500')">
+                    I'll turn Blue on screen
+                </p>
+            </section>
+            <section class="h-screen w-full flex flex-col gap-4 items-center justify-center px-4 md:p-12 lg:p-16">
+                <p class="transition duration-500 text-lg" on-x-center="this.classList[entry.isIntersecting ? 'add' : 'remove']('text-green-500')">
+                    I'll turn Green when vertically centered
+                </p>
+                <p class="transition duration-500 text-lg" on-screen="this.classList[entry.isIntersecting ? 'add' : 'remove']('text-green-500')">
+                    I'll turn Green on screen
+                </p>
+            </section>
+        </main>
+    </body>
+
+</html>

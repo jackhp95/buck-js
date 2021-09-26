@@ -49,6 +49,28 @@
                     const form = e.target.closest(".fmcty-wrapper");
                     Fmcty[form.id].prev()
                 }
+                const getOrder = (form) => {
+                    const order = [];
+                    const fields = [...QSA(".fmcty-field", form)];
+                    fields.forEach((el) => {
+                        const section = el.closest(".fmcty-section");
+                        const inputName = QS("[name]", el)?.name;
+                        if (!inputName) return;
+                        if (section) {
+                            const title = section.dataset.fmctySection;
+                            const last = order.at(-1);
+                            if (last?.title === title) {
+                                last.inputs.push(inputName);
+                            } else {
+                                order.push({ title, inputs: [inputName] });
+                            }
+                        } else {
+                            order.push(inputName);
+                        }
+                    });
+                    return order;
+                }
+
                 const initFmctyField = el => el.addEventListener("input", onInput);
                 const initFmctyNext = el => el.addEventListener("click", onNext);
                 const initFmctyPrev = el => el.addEventListener("click", onPrev);
@@ -56,8 +78,10 @@
                     const id = wrapperEl.id;
                     const formData = new FormData(QS("form.fmcty-form", wrapperEl));
                     const values = {};
+                    const order = getOrder(wrapperEl);
+                    const config = {order};
                     dataToValues(formData, values);
-                    const formAPI = { values, formData, ...navSections(wrapperEl), };
+                    const formAPI = { values, formData, ...navSections(wrapperEl), config};
                     Object.assign(Fmcty, { [id]: formAPI })
                     loop(initFmctyField)(QSA(".fmcty-field", wrapperEl))
                     loop(initFmctyNext)(QSA(".fmcty-next", wrapperEl));

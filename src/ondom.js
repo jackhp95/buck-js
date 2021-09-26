@@ -27,7 +27,7 @@ const onDom = async (c) => {
     queue: new Set(), // contents updated
     after: new Set(), // contents updated
     plugins: new Set(c.plugins || []),
-    allSelect: "*",
+    allSelect: "",
   };
   // SETUP
 
@@ -98,12 +98,19 @@ const onDom = async (c) => {
     el && state.query.add(el);
   });
   const onMutationRecord = (mr) => {
-    mr.type === "attributes" && state.match.add(asEl(mr.target));
+    if (mr.type === "attributes") {
+      state.match.add(asEl(mr.target));
+      // delete the custom defined property which corresponds to the changed attribute
+      if (!(mr.attributeName in Object.getPrototypeOf(mr.target))) {
+        delete mr.target[mr.attributeName];
+      }
+    }
     mr.addedNodes.length && addElementsToQuery(mr.addedNodes);
     mr.removedNodes.length && addElementsToQuery(mr.removedNodes);
     state.match.add(asEl(mr.target));
   };
   const onMutationRecords = (mrs) => {
+    if (!state.allSelect) return;
     loop(onMutationRecord)(mrs);
     config.scheduleQueue(onQueue);
   };
@@ -112,7 +119,7 @@ const onDom = async (c) => {
     state.graph.set(p)(el);
     p.update(el);
   };
-  const initPlugin = (p) => loop(initElement(p))(QSA(p.select, config.root));
+  const initPlugin = (p) => p.select && loop(initElement(p))(QSA(p.select, config.root));
 
   // API
   const returnAPI = () => {
@@ -134,7 +141,7 @@ const onDom = async (c) => {
     };
     const API = Object.assign(MAIN_FUNCTION, METHODS);
     return c.debug ? Object.assign(API, { debug: state }) : API;
-  }
+  };
 
   const initDOM = async (resolve) => {
     loop(initPlugin)(state.plugins);

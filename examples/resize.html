@@ -1,0 +1,125 @@
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta
+            http-equiv="X-UA-Compatible"
+            content="IE=edge"
+        >
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <title>Resize</title>
+
+        <script type="module">
+            import { setup } from "https://jackhpeterson.com/__/esm/twind/shim.js";
+            import { onDom, perf, QSA, QS, loop, attr, css, tick, next, wait, sync } from "/src/index.js";
+            setup();
+            // utils 
+            const toMS = (s) => parseFloat(s) * (/\ds$/.test(s) ? 1000 : 1);
+            const getPosition = (el) => {
+                const bcr = el.getBoundingClientRect();
+                return {
+                    x: bcr.x,
+                    y: bcr.y,
+                    top: bcr.top,
+                    right: bcr.right,
+                    bottom: bcr.bottom,
+                    left: bcr.left,
+                };
+            };
+            const getSize = (el) => {
+                const bcr = el.getBoundingClientRect();
+                return {
+                    width: bcr.width,
+                    height: bcr.height,
+                };
+            };
+            const resizePlugin = (el) => {
+                const resizeSet = new Set();
+                const resizer = (el) => {
+                    // escape if currently resizing 
+                    if (resizeSet.has(el)) return;
+
+                    const init = el.__size;
+                    const size = getSize(el);
+
+                    // escape if nothing changed size 
+                    if (init.height === size.height && init.width === size.width) return;
+
+                    resizeSet.add(el);
+
+                    el.style.height = init.height + "px";
+                    el.style.width = init.width + "px";
+
+                    tick(() => {
+                        el.style.height = size.height + "px";
+                        el.style.width = size.width + "px";
+                        el.__size = size;
+                    })();
+
+                    const duration = toMS(css(el, "transition-duration"));
+                    wait(duration)(() => {
+                        resizeSet.delete(el);
+                        el.style.height = null;
+                        el.style.width = null;
+                    })();
+                }
+                const resizeEntry = (e) => resizer(e.target);
+                const obs = new ResizeObserver(loop(resizeEntry));
+                const obsSet = new Set();
+                const update = (el) => {
+                    if (el.isConnected && el.hasAttribute("smooth-resize")) {
+                        if (!obsSet.has(el)) {
+                            obs.observe(el);
+                            el.__size = getSize(el);
+                            obsSet.add(el);
+                        }
+                        tick(resizer)(el);
+                    } else {
+                        obs.unobserve(el)
+                        obsSet.delete(el);
+                    }
+                };
+                return { select: "[smooth-resize]", update };
+            }
+
+            const onDomConfig = {
+                plugins: [resizePlugin()]
+            };
+
+            perf(onDom, "onDom")(onDomConfig);
+        </script>
+
+    </head>
+
+    <body class="min-h-screen w-full">
+        <header class="bg-black text-white px-4 md:p-12 lg:p-16">
+            <h1 class="text-5xl">Resize Plugins</h1>
+            <p>onDom in conjunction with resizeObserver and Mutation Observer</p>
+        </header>
+        <section class="p-4">
+            <article
+                smooth-resize
+                onclick="this.appendChild(event.target.cloneNode(true))"
+                class="overflow-hidden max-w-xs p-4 border rounded-2xl rounded-bl-none bg-gradient-to-b to-blue-700 from-blue-500 text-white transition-all ease-out duration-300"
+            >
+                <p>
+                    I'm not explicitly sized, so normally I'd just instantly resize. There'd be no transition. Auto
+                    sized elements don't transition.
+                </p>
+                <p>
+                    Yet I do resize smoothly! The way this happens is I listen for any changes to my size, then I
+                    explicitly set my current size. Then next frame, I explicitly set my next size. then once my
+                    transition duration ends, I'll revert my explicitly stated next size.
+                </p>
+                <p>
+                    Click to add more text.
+                </p>
+                </p>
+            </article>
+        </section>
+    </body>
+
+</html>
