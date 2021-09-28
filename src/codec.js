@@ -13,34 +13,34 @@ import {
   input,
   validation,
 } from "./html.api.js";
-import { camelToKebab, flattenObject } from "./utils.js";
+import { camelToKebab, flattenObject, attr } from "./utils.js";
 
 const hook = (resolver) => {
   const set = resolver();
-  const isFn = typeof resolvedValue === "function";
-  const val = isFn ? resolvedValue() : resolvedValue;
+  const isFn = typeof set === "function";
+  const val = isFn ? set() : set;
   return [val, set];
 };
 
-const definePlugin = (attr, prop) => (model) => {
+const definePlugin = (elAttr, prop) => (model) => {
   const localMap = new Map();
 
   return {
-    select: `[${attr}]`,
+    select: `[${elAttr}]`,
     update: (el) => {
-      if (el.isConnected && el.hasAttribute(attr)) {
-        attr.resolve(attr, model)(el);
+      if (el.isConnected && el.hasAttribute(elAttr)) {
+        attr.resolve(elAttr, model)(el);
         // set up reactive effect
         if (!localMap.has(el)) {
           // Data change will update DOM
           const fx = effect(() => {
-            const [val] = hook(el[attr]);
+            const [val] = hook(el[elAttr]);
             if (val != el[prop]) el[prop] = val;
           });
           localMap.set(el, fx);
         }
         // DOM change will update Data
-        const [val, set] = hook(el[attr]);
+        const [val, set] = hook(el[elAttr]);
         if (val != el[prop]) set(el[prop]);
       } else {
         // stop applying the reactive effect on the element

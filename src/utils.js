@@ -9,10 +9,10 @@ const QS = (sel, el = document) => el.querySelector(sel);
 const asEl = (node) => (node.tagName ? node : node.parentElement);
 const invoke = (fn, ...args) => fn(...args);
 const noop = () => {};
-const identity = (x) => x; 
+const identity = (x) => x;
 const kebabToCamel = (str) => str.replace(/-./g, (m) => m.toUpperCase()[1]);
-const camelToKebab = (str) => str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
-
+const camelToKebab = (str) =>
+  str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
 const dotNoteRE = /^[\w|\$|\_][\w|\$|\_|0-9]+/;
 const dotOrBox = (v) =>

@@ -19,44 +19,6 @@
             import * as codec from "/src/codec.js";
             setup();
 
-            const xTextPlugin = (model) => {
-                const xTextMap = new Map();
-                return {
-                    select: "[x-text]",
-                    update: (el) => {
-                        if (el.isConnected && el.hasAttribute("x-text")) {
-                            attr.resolve("x-text", model || window)(el);
-                            const textResolver = el["x-text"];
-
-                            if (!xTextMap.has(el)) {
-                                // Data change will update DOM 
-                                const fx = effect(() => {
-                                    const resolvedValue = textResolver();
-                                    const currentValue = typeof resolvedValue === "function" ? resolvedValue() : resolvedValue;
-                                    if (currentValue != el.textContent) {
-                                        el.textContent = currentValue;
-                                    };
-                                });
-                                xTextMap.set(el, fx);
-                            }
-                            // DOM change will update Data
-                            const resolvedValue = textResolver();
-                            const currentValue = typeof resolvedValue === "function" ? resolvedValue() : resolvedValue;
-                            if (currentValue != el.textContent) textResolver(el.textContent);
-                        } else {
-                            // stop applying the reactive effect on the element 
-                            if (xTextMap.has(el)) xTextMap.get(el).stop();
-                            // remove the element from storage (avoid mem leak)
-                            xTextMap.delete(el);
-                        }
-                    }
-                };
-            }
-
-            const reactivePlugins = (model) => {
-                return [xTextPlugin].map(fn => fn(model));
-            }
-
             const model = reactive({
                 person: "Gimbo",
                 greet: "Hello",
@@ -72,7 +34,7 @@
             window.model = Object.assign(model, { len() { return model.person.length + model.greet.length } });
 
             const onDomConfig = {
-                plugins: [...reactivePlugins(model)]
+                plugins: [...codec.init(model)]
             };
             perf(onDom, "onDom")(onDomConfig);
         </script>
