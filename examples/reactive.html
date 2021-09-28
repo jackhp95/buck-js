@@ -13,19 +13,66 @@
         <title>Reactive</title>
 
         <script type="module">
-            import { setup } from "https://jackhpeterson.com/__/esm/@vue/reactivity";
+            import { reactive, effect, computed } from 'https://jackhpeterson.com/__/esm/@vue/reactivity';
             import { setup } from "https://jackhpeterson.com/__/esm/twind/shim.js";
-            import { onDom, perf, QSA, QS, loop } from "/src/index.js";
+            import { onDom, perf, QSA, QS, loop, attr, tick } from "/src/index.js";
             setup();
 
-            const reactivePlugins = () => {
-                return [];
+            const xTextPlugin = (model) => {
+                const xTextMap = new Map();
+                return {
+                    select: "[x-text]",
+                    update: (el) => {
+                        if (el.isConnected && el.hasAttribute("x-text")) {
+                            attr.resolve("x-text", model || window)(el);
+                            const textResolver = el["x-text"];
+
+                            if (!xTextMap.has(el)) {
+                                // Data change will update DOM 
+                                const fx = effect(() => {
+                                    const resolvedValue = textResolver();
+                                    const currentValue = typeof resolvedValue === "function" ? resolvedValue() : resolvedValue;
+                                    if (currentValue != el.textContent) {
+                                        el.textContent = currentValue;
+                                    };
+                                });
+                                xTextMap.set(el, fx);
+                            }
+                            // DOM change will update Data
+                            const resolvedValue = textResolver();
+                            const currentValue = typeof resolvedValue === "function" ? resolvedValue() : resolvedValue;
+                            if (currentValue != el.textContent) textResolver(el.textContent);
+                        } else {
+                            // stop applying the reactive effect on the element 
+                            if (xTextMap.has(el)) xTextMap.get(el).stop();
+                            // remove the element from storage (avoid mem leak)
+                            xTextMap.delete(el);
+                        }
+                    }
+                };
             }
 
-            const onDomConfig = {
-                plugins: [...reactivePlugins()]
-            };
+            const reactivePlugins = (model) => {
+                return [xTextPlugin].map(fn => fn(model));
+            }
 
+            const model = reactive({
+                person: "Gimbo",
+                greet: "Hello",
+                nested: {
+                    person: "Gimbo",
+                    greet: "Hello",
+                    nested: {
+                        person: "Gimbo",
+                        greet: "Hello"
+                    }
+                }
+            })
+            window.model = Object.assign(model, { len() { return model.person.length + model.greet.length } });
+
+            const onDomConfig = {
+                plugins: [...reactivePlugins(model)]
+            };
             perf(onDom, "onDom")(onDomConfig);
         </script>
 
@@ -33,9 +80,16 @@
 
     <body class="min-h-screen w-full">
         <header class="bg-black text-white px-4 md:p-12 lg:p-16">
-                <h1 class="text-5xl">Reactive HTML</h1>
-                <p>onDom in conjunction with @vue/reactive makes a pretty nice way to write reactive HTML.</p>
+            <h1 class="text-5xl">Reactive HTML</h1>
+            <p>onDom in conjunction with @vue/reactive makes a pretty nice way to write reactive HTML.</p>
         </header>
+        <h1 onclick="model.greet = 'Hiya'">
+            <span x-text="greet">SUP</span>
+            <span x-text="person">BRUNKUS</span>
+        </h1>
+        <h2 x-text="len">0</h2>
+
+
     </body>
 
 </html>
