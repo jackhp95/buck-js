@@ -22,6 +22,22 @@ const hook = (resolver) => {
   return [val, set];
 };
 
+// Misc (debug, split, loop.first, loop.last, loop.key, loop.value, filter, min, max, loop.length, sort)
+
+// Text Formatting (dates, json, md, currency, encoding)
+
+// Custom Templating (if, else, each, scope/ref, include, await, )
+
+
+// One Way Properties (clientHeight, onclick)
+
+// Boolean Properties (Hidden, Required) 
+
+// Strange Dual Properties (Value, Id)
+
+// Object Properties (ClassList, Attributes)
+
+// String Properties (ClassName, innerHTML)
 const definePlugin = (elAttr, prop) => (model) => {
   const localMap = new Map();
 

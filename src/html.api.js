@@ -193,11 +193,11 @@ const events = {
 
 const microdata = {
   item: {
-    id: "id",
-    prop: "prop",
-    ref: "ref",
-    scope: "scope",
-    type: "type",
+    id: "itemid",
+    prop: "itemprop",
+    ref: "itemref",
+    scope: "itemscope",
+    type: "itemtype",
   },
 };
 
