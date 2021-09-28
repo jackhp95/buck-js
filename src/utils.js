@@ -9,6 +9,33 @@ const QS = (sel, el = document) => el.querySelector(sel);
 const asEl = (node) => (node.tagName ? node : node.parentElement);
 const invoke = (fn, ...args) => fn(...args);
 const noop = () => {};
+const identity = (x) => x; 
+const kebabToCamel = (str) => str.replace(/-./g, (m) => m.toUpperCase()[1]);
+const camelToKebab = (str) => str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
+
+const dotNoteRE = /^[\w|\$|\_][\w|\$|\_|0-9]+/;
+const dotOrBox = (v) =>
+  dotNoteRE.test(v) ? `${v}.` : `[${v.replaceAll('"', '\\"')}].`;
+
+const flattenObject = (obj, c) => {
+  const { prefix, join } = Object.assign({ prefix: "", join: dotOrBox }, c);
+  return Object.keys(obj).reduce((acc, k) => {
+    const pre = prefix.length ? `${prefix}` : "";
+    if (
+      typeof obj[k] === "object" &&
+      obj[k] !== null &&
+      Object.keys(obj[k]).length > 0
+    )
+      Object.assign(
+        acc,
+        flattenObject(obj[k], { prefix: pre + join(k), join })
+      );
+    else acc[pre + k] = obj[k];
+    return acc;
+  }, {});
+};
+
 const maybe =
   (mapFn, withDefault = noop) =>
   (...args) => {
@@ -23,8 +50,7 @@ const perf =
   async (...args) => {
     const name = _name || fn.name;
     performance.mark("a");
-    const result =
-      typeof fn?.then === "function" ? await fn(...args) : fn(...args);
+    const result = await Promise.resolve(fn(...args));
     performance.mark("b");
     performance.measure(name, "a", "b");
     loop(console.log)(performance.getEntriesByName(name, "measure"));
@@ -122,8 +148,12 @@ export {
   sortEls,
   css,
   invoke,
+  flattenObject,
   perf,
   attr,
   maybe,
   noop,
+  identity,
+  kebabToCamel,
+  camelToKebab,
 };
