@@ -72,9 +72,18 @@ import { camelToKebab, flattenObject, attr, log } from "./utils.js";
 // , Bool: hidden, draggable 
 // }
 
-// definePlugin = (select, accessDom, attr.resolver) => (model) => {}
-// accessData is stored at el[select], 
-// pull fresh el[select] before running since it can mutate.
+// definePlugin = (xAttr, accessDom, resolve.path) => (model) => {
+  // select = `[${xAttr}]`;
+  // update = (el) => {
+    // create cached accessData from resolve(attr(el, xAttr)) if one doesn't exist.
+    // accessData is stored at el[xAttr],
+    // run revise(accessDom, el[xAttr])()
+    // create effect (if it doesn't exist)
+      // pull fresh el[xAttr] inside effect. (needed for reactivity AND helps avoid mutation issues)
+      // effect(revise(el[xAttr],accessDom))
+// }
+// }
+
 
 const definePlugin = (elAttr, prop) => (model) => {
   const localMap = new Map();
@@ -89,7 +98,7 @@ const definePlugin = (elAttr, prop) => (model) => {
         if (resolver() != el[prop]) resolver(el[prop]);
         // set up reactive effect
         if (!localMap.has(el)) {
-          // Data change will update DOM
+          // Data change will update the DOM
           const fx = effect(() => {
             const resolver = el[elAttr];
             if (resolver() != el[prop]) el[prop] = resolver();
