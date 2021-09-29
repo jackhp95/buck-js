@@ -19,19 +19,12 @@
             import * as codec from "/src/codec.js";
             setup();
 
-            const model = reactive({
-                person: "Gimbo",
-                greet: "Hello",
-                nested: {
-                    person: "Gimbo",
-                    greet: "Hello",
-                    nested: {
-                        person: "Gimbo",
-                        greet: "Hello"
-                    }
-                }
-            })
-            window.model = Object.assign(model, { len() { return model.person.length + model.greet.length } });
+            const model = reactive({});
+            const formValues = (x) => Object.fromEntries(new FormData(x));
+            const updateForm = (x) => Object.assign(model, formValues(x));
+            loop(updateForm)(QSA("form"));
+
+            Object.assign(window, { updateForm }, { model });
 
             const onDomConfig = {
                 plugins: [...codec.init(model)]
@@ -49,7 +42,8 @@
         <main class="flex max-w-lg mx-auto">
             <form
                 class="flex flex-col"
-                oninput="model.form = Object.fromEntries(new FormData(this))"
+                id="_reactiveForm"
+                oninput="updateForm(this)"
             >
                 <label for="title">title</label>
                 <input
@@ -209,55 +203,52 @@
             <output class="flex-auto">
                 <dl>
                     <dt>title</dt>
-                    <dd x-title="form.title">title</dd>
+                    <dd x-title="title">title</dd>
                     <dt>id</dt>
-                    <dd x-id="form.id">id</dd>
+                    <dd x-id="id">id</dd>
                     <dt>html</dt>
-                    <dd x-html="form.html">html</dd>
+                    <dd x-html="html">html</dd>
                     <dt>text</dt>
-                    <dd x-text="form.text">text</dd>
+                    <dd x-text="text">text</dd>
                     <dt>className</dt>
-                    <dd x-className="form.className">className</dd>
+                    <dd x-className="className">className</dd>
                     <dt>classList</dt>
-                    <dd x-classList="form.classList">classList</dd>
+                    <dd x-classList="classList">classList</dd>
                     <dt>data</dt>
-                    <dd x-data="form.data">data</dd>
+                    <dd x-data="data">data</dd>
                     <dt>attributes</dt>
-                    <dd x-attributes="form.attributes">attributes</dd>
+                    <dd x-attributes="attributes">attributes</dd>
                     <dt>hidden</dt>
-                    <dd x-hidden="form.hidden">hidden</dd>
+                    <dd x-hidden="hidden">hidden</dd>
                     <dt>draggable</dt>
-                    <dd x-draggable="form.draggable">draggable</dd>
+                    <dd x-draggable="draggable">draggable</dd>
                     <dt>contentEditable</dt>
-                    <dd x-contentEditable="form.contentEditable">contentEditable</dd>
+                    <dd x-contentEditable="contentEditable">contentEditable</dd>
                     <dt>spellcheck</dt>
-                    <dd x-spellcheck="form.spellcheck">spellcheck</dd>
+                    <dd x-spellcheck="spellcheck">spellcheck</dd>
                     <dt>autocapitalize</dt>
-                    <dd x-autocapitalize="form.autocapitalize">autocapitalize</dd>
+                    <dd x-autocapitalize="autocapitalize">autocapitalize</dd>
                     <dt>autocomplete</dt>
-                    <dd x-autocomplete="form.autocomplete">autocomplete</dd>
+                    <dd x-autocomplete="autocomplete">autocomplete</dd>
                     <dt>autofocus</dt>
-                    <dd x-autofocus="form.autofocus">autofocus</dd>
+                    <dd x-autofocus="autofocus">autofocus</dd>
                     <dt>accesskey</dt>
-                    <dd x-accesskey="form.accesskey">accesskey</dd>
+                    <dd x-accesskey="accesskey">accesskey</dd>
                     <dt>enterkeyhint</dt>
-                    <dd x-enterkeyhint="form.enterkeyhint">enterkeyhint</dd>
+                    <dd x-enterkeyhint="enterkeyhint">enterkeyhint</dd>
                     <dt>inputMode</dt>
-                    <dd x-inputMode="form.inputMode">inputMode</dd>
+                    <dd x-inputMode="inputMode">inputMode</dd>
                     <dt>tabIndex</dt>
-                    <dd x-tabIndex="form.tabIndex">tabIndex</dd>
+                    <dd x-tabIndex="tabIndex">tabIndex</dd>
                     <dt>lang</dt>
-                    <dd x-lang="form.lang">lang</dd>
+                    <dd x-lang="lang">lang</dd>
                     <dt>translate</dt>
-                    <dd x-translate="form.translate">translate</dd>
+                    <dd x-translate="translate">translate</dd>
                     <dt>dir</dt>
-                    <dd x-dir="form.dir">dir</dd>
+                    <dd x-dir="dir">dir</dd>
                 </dl>
             </output>
         </main>
-        <h2 x-text="len">0</h2>
-
-
     </body>
 
 </html>

@@ -32,6 +32,50 @@ import { camelToKebab, flattenObject, attr, log } from "./utils.js";
 // Object Properties (ClassList, Attributes)
 
 // String Properties (ClassName, innerHTML)
+
+// perhaps this should be reworked:
+// resolver should be renamed to access
+// access = (?setNew) = value
+// resolver should JUST mean taking an attribute string, and resolving where that data exists.
+// once you resolve what data your attribute value (string) is referencing, you can access it.
+// 1) Compare dom/data
+// isEq(accessDom(), accessData()) // use vue equality
+// 2) Pull Data from Dom (use _.set or something to create new Data Structures)
+// update = () => compare || accessData(accessDom())
+// 3) Establish Data Binding
+// effect = () => compare || accessDom(accessData())
+//
+// The effect and update api could be unified 
+// revise = (truthAccessor, compareAccessor) = () => {
+//    const truth = truthAccessor();
+//    isEq(trueValue, compareAccessor()) || compareAccessor(trueValue);
+// }
+// effect(revise(dataAccessor, domAccessor))
+// update(manageCodec(revise(dataAccessor, domAccessor)))
+//
+// manageCodec tracks the element avoids mem leaks
+// erases removed/irrelevant elements and closes effects
+// only applies revise when relevant.
+//
+// accessData === attr.access = 
+// { path: "current attr.resolve"
+// , obj: JSON.parse()
+// , fetch: fetch()
+// , dom: QS(), QSA()
+// , js: inline
+// , method: runs JS method (Safer than inline JS [TEA Msg])
+// }
+// accessDom === prop.access = 
+// { String: current definePlugin // { attr: false, prop: true }
+// , Object: dataset
+// , Map: attributes, classlist 
+// , Bool: hidden, draggable 
+// }
+
+// definePlugin = (select, accessDom, attr.resolver) => (model) => {}
+// accessData is stored at el[select], 
+// pull fresh el[select] before running since it can mutate.
+
 const definePlugin = (elAttr, prop) => (model) => {
   const localMap = new Map();
 
