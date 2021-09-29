@@ -41,15 +41,220 @@
 
     </head>
 
-    <body class="min-h-screen w-full">
-        <header class="bg-black text-white px-4 md:p-12 lg:p-16">
+    <body class="w-full min-h-screen">
+        <header class="px-4 text-white bg-black md:p-12 lg:p-16">
             <h1 class="text-5xl">Reactive HTML</h1>
             <p>onDom in conjunction with @vue/reactive makes a pretty nice way to write reactive HTML.</p>
         </header>
-        <h1 onclick="model.greet = 'Hiya'">
-            <span x-text="greet">SUP</span>
-            <span x-text="person">BRUNKUS</span>
-        </h1>
+        <main class="flex max-w-lg mx-auto">
+            <form
+                class="flex flex-col"
+                oninput="model.form = Object.fromEntries(new FormData(this))"
+            >
+                <label for="title">title</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value="title"
+                >
+                <label for="id">id</label>
+                <input
+                    type="text"
+                    id="id"
+                    name="id"
+                    value="id"
+                >
+                <label for="html">html</label>
+                <input
+                    type="text"
+                    id="html"
+                    name="html"
+                    value="html"
+                >
+                <label for="text">text</label>
+                <input
+                    type="text"
+                    id="text"
+                    name="text"
+                    value="text"
+                >
+                <label for="className">className</label>
+                <input
+                    type="text"
+                    id="className"
+                    name="className"
+                    value="className"
+                >
+                <label for="classList">classList</label>
+                <input
+                    type="text"
+                    id="classList"
+                    name="classList"
+                    value="classList"
+                >
+                <label for="data">data</label>
+                <input
+                    type="text"
+                    id="data"
+                    name="data"
+                    value="data"
+                >
+                <label for="attributes">attributes</label>
+                <input
+                    type="text"
+                    id="attributes"
+                    name="attributes"
+                    value="attributes"
+                >
+                <label for="hidden">hidden</label>
+                <input
+                    type="text"
+                    id="hidden"
+                    name="hidden"
+                    value="hidden"
+                >
+                <label for="draggable">draggable</label>
+                <input
+                    type="text"
+                    id="draggable"
+                    name="draggable"
+                    value="draggable"
+                >
+                <label for="contentEditable">contentEditable</label>
+                <input
+                    type="text"
+                    id="contentEditable"
+                    name="contentEditable"
+                    value="contentEditable"
+                >
+                <label for="spellcheck">spellcheck</label>
+                <input
+                    type="text"
+                    id="spellcheck"
+                    name="spellcheck"
+                    value="spellcheck"
+                >
+                <label for="autocapitalize">autocapitalize</label>
+                <input
+                    type="text"
+                    id="autocapitalize"
+                    name="autocapitalize"
+                    value="autocapitalize"
+                >
+                <label for="autocomplete">autocomplete</label>
+                <input
+                    type="text"
+                    id="autocomplete"
+                    name="autocomplete"
+                    value="autocomplete"
+                >
+                <label for="autofocus">autofocus</label>
+                <input
+                    type="text"
+                    id="autofocus"
+                    name="autofocus"
+                    value="autofocus"
+                >
+                <label for="accesskey">accesskey</label>
+                <input
+                    type="text"
+                    id="accesskey"
+                    name="accesskey"
+                    value="accesskey"
+                >
+                <label for="enterkeyhint">enterkeyhint</label>
+                <input
+                    type="text"
+                    id="enterkeyhint"
+                    name="enterkeyhint"
+                    value="enterkeyhint"
+                >
+                <label for="inputMode">inputMode</label>
+                <input
+                    type="text"
+                    id="inputMode"
+                    name="inputMode"
+                    value="inputMode"
+                >
+                <label for="tabIndex">tabIndex</label>
+                <input
+                    type="text"
+                    id="tabIndex"
+                    name="tabIndex"
+                    value="tabIndex"
+                >
+                <label for="lang">lang</label>
+                <input
+                    type="text"
+                    id="lang"
+                    name="lang"
+                    value="lang"
+                >
+                <label for="translate">translate</label>
+                <input
+                    type="text"
+                    id="translate"
+                    name="translate"
+                    value="translate"
+                >
+                <label for="dir">dir</label>
+                <input
+                    type="text"
+                    id="dir"
+                    name="dir"
+                    value="dir"
+                >
+            </form>
+            <output class="flex-auto">
+                <dl>
+                    <dt>title</dt>
+                    <dd x-title="form.title">title</dd>
+                    <dt>id</dt>
+                    <dd x-id="form.id">id</dd>
+                    <dt>html</dt>
+                    <dd x-html="form.html">html</dd>
+                    <dt>text</dt>
+                    <dd x-text="form.text">text</dd>
+                    <dt>className</dt>
+                    <dd x-className="form.className">className</dd>
+                    <dt>classList</dt>
+                    <dd x-classList="form.classList">classList</dd>
+                    <dt>data</dt>
+                    <dd x-data="form.data">data</dd>
+                    <dt>attributes</dt>
+                    <dd x-attributes="form.attributes">attributes</dd>
+                    <dt>hidden</dt>
+                    <dd x-hidden="form.hidden">hidden</dd>
+                    <dt>draggable</dt>
+                    <dd x-draggable="form.draggable">draggable</dd>
+                    <dt>contentEditable</dt>
+                    <dd x-contentEditable="form.contentEditable">contentEditable</dd>
+                    <dt>spellcheck</dt>
+                    <dd x-spellcheck="form.spellcheck">spellcheck</dd>
+                    <dt>autocapitalize</dt>
+                    <dd x-autocapitalize="form.autocapitalize">autocapitalize</dd>
+                    <dt>autocomplete</dt>
+                    <dd x-autocomplete="form.autocomplete">autocomplete</dd>
+                    <dt>autofocus</dt>
+                    <dd x-autofocus="form.autofocus">autofocus</dd>
+                    <dt>accesskey</dt>
+                    <dd x-accesskey="form.accesskey">accesskey</dd>
+                    <dt>enterkeyhint</dt>
+                    <dd x-enterkeyhint="form.enterkeyhint">enterkeyhint</dd>
+                    <dt>inputMode</dt>
+                    <dd x-inputMode="form.inputMode">inputMode</dd>
+                    <dt>tabIndex</dt>
+                    <dd x-tabIndex="form.tabIndex">tabIndex</dd>
+                    <dt>lang</dt>
+                    <dd x-lang="form.lang">lang</dd>
+                    <dt>translate</dt>
+                    <dd x-translate="form.translate">translate</dd>
+                    <dt>dir</dt>
+                    <dd x-dir="form.dir">dir</dd>
+                </dl>
+            </output>
+        </main>
         <h2 x-text="len">0</h2>
 
 

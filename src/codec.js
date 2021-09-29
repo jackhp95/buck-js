@@ -13,14 +13,8 @@ import {
   input,
   validation,
 } from "./html.api.js";
-import { camelToKebab, flattenObject, attr } from "./utils.js";
+import { camelToKebab, flattenObject, attr, log } from "./utils.js";
 
-const hook = (resolver) => {
-  const set = resolver();
-  const isFn = typeof set === "function";
-  const val = isFn ? set() : set;
-  return [val, set];
-};
 
 // Misc (debug, split, loop.first, loop.last, loop.key, loop.value, filter, min, max, loop.length, sort)
 
@@ -46,18 +40,18 @@ const definePlugin = (elAttr, prop) => (model) => {
     update: (el) => {
       if (el.isConnected && el.hasAttribute(elAttr)) {
         attr.resolve(elAttr, model)(el);
+        // DOM change will update Data
+        const resolver = el[elAttr];
+        if (resolver() != el[prop]) resolver(el[prop]);
         // set up reactive effect
         if (!localMap.has(el)) {
           // Data change will update DOM
           const fx = effect(() => {
-            const [val] = hook(el[elAttr]);
-            if (val != el[prop]) el[prop] = val;
+            const resolver = el[elAttr];
+            if (resolver() != el[prop]) el[prop] = resolver();
           });
           localMap.set(el, fx);
         }
-        // DOM change will update Data
-        const [val, set] = hook(el[elAttr]);
-        if (val != el[prop]) set(el[prop]);
       } else {
         // stop applying the reactive effect on the element
         if (localMap.has(el)) localMap.get(el).stop();
@@ -75,7 +69,6 @@ const plugins = (prefix = "x-") => {
     ([a, p]) => {
       const attr = prefix + camelToKebab(a);
       const prop = p;
-      console.log(attr, prop);
       return definePlugin(attr, prop);
     }
   );

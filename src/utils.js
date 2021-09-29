@@ -100,11 +100,12 @@ const inlineFunction =
     }
     return el[attrName](...argValues);
   };
-
+const cleanPathRE = /^[\.\[]/;
 const inlineResolve = (attrName, obj) => (el) => {
   if (!(attrName in el)) {
     const path = el.getAttribute(attrName);
-    const cleanPath = /^[\.\[]/.test(path) ? path : "." + path;
+    const cleanPath = cleanPathRE.test(path) ? path : "." + path;
+    
     // store the callback function to make non-ref values reactive;
     el[attrName] = Function(
       "maybe",
@@ -112,6 +113,7 @@ const inlineResolve = (attrName, obj) => (el) => {
       `return maybe((...a) => {
           if (a.length) {
             const [value] = a;
+            log(value);
             obj${cleanPath} = value;
           }
           return obj${cleanPath};

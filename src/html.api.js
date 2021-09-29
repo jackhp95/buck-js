@@ -208,9 +208,9 @@ const element = {
   text: "textContent",
   className: "className",
   // Obj
-  classList: "classList",
-  data: "dataset",
-  attributes: "attributes",
+  // classList: "classList",
+  // data: "dataset",
+  // attributes: "attributes",
   // bool
   hidden: "hidden",
   draggable: "draggable",
