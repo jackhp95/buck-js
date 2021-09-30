@@ -10,7 +10,7 @@ const accessor = {
     (prop) =>
     (el) =>
     (...a) =>
-      a.length ? (el[prop] = String(a[0])) : String(el[prop]),
+      a.length ? (el[prop] = (a[0]) || "") : el[prop] || "",
   Boolean:
     (prop) =>
     (el) =>
