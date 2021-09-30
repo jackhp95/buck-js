@@ -14,11 +14,11 @@
 
         <script type="module">
             import { setup } from "https://jackhpeterson.com/__/esm/twind/shim.js";
-            import { onDom, perf, QSA, QS, loop, attr } from "/src/index.js";
+            import { onDom, perf, QSA, QS, loop, resolve } from "/src/index.js";
             setup();
             const viewportPlugins = () => {
                 // X Center 
-                const configXCenter = [loop(attr.entry("on-x-center")), { rootMargin: "-50% 0px" }]
+                const configXCenter = [loop(resolve.entry("on-x-center")), { rootMargin: "-50% 0px" }]
                 const onXCenter = new IntersectionObserver(...configXCenter);
                 const XCenterSet = new Set();
                 const pluginXCenter = {
@@ -36,7 +36,7 @@
                     }
                 };
                 // On Screen
-                const configScreen = [loop(attr.entry("on-screen"))]
+                const configScreen = [loop(resolve.entry("on-screen"))]
                 const onScreen = new IntersectionObserver(...configScreen);
                 const ScreenSet = new Set();
                 const pluginScreen = {

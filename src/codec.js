@@ -13,8 +13,15 @@ import {
   input,
   validation,
 } from "./html.api.js";
-import { camelToKebab, flattenObject, attr, log } from "./utils.js";
-
+import {
+  camelToKebab,
+  flattenObject,
+  resolve,
+  equals,
+  log,
+  loop,
+} from "./utils.js";
+import { then } from "./orca.js";
 
 // Misc (debug, split, loop.first, loop.last, loop.key, loop.value, filter, min, max, loop.length, sort)
 
@@ -22,10 +29,9 @@ import { camelToKebab, flattenObject, attr, log } from "./utils.js";
 
 // Custom Templating (if, else, each, scope/ref, include, await, )
 
-
 // One Way Properties (clientHeight, onclick)
 
-// Boolean Properties (Hidden, Required) 
+// Boolean Properties (Hidden, Required)
 
 // Strange Dual Properties (Value, Id)
 
@@ -45,7 +51,7 @@ import { camelToKebab, flattenObject, attr, log } from "./utils.js";
 // 3) Establish Data Binding
 // effect = () => compare || accessDom(accessData())
 //
-// The effect and update api could be unified 
+// The effect and update api could be unified
 // revise = (truthAccessor, compareAccessor) = () => {
 //    const truth = truthAccessor();
 //    isEq(trueValue, compareAccessor()) || compareAccessor(trueValue);
@@ -57,7 +63,7 @@ import { camelToKebab, flattenObject, attr, log } from "./utils.js";
 // erases removed/irrelevant elements and closes effects
 // only applies revise when relevant.
 //
-// accessData === attr.access = 
+// accessData === attr.access =
 // { path: "current attr.resolve"
 // , obj: JSON.parse()
 // , fetch: fetch()
@@ -65,45 +71,49 @@ import { camelToKebab, flattenObject, attr, log } from "./utils.js";
 // , js: inline
 // , method: runs JS method (Safer than inline JS [TEA Msg])
 // }
-// accessDom === prop.access = 
+// accessDom === prop.access =
 // { String: current definePlugin // { attr: false, prop: true }
 // , Object: dataset
-// , Map: attributes, classlist 
-// , Bool: hidden, draggable 
+// , Map: attributes, classlist
+// , Bool: hidden, draggable
 // }
 
 // definePlugin = (xAttr, accessDom, resolve.path) => (model) => {
-  // select = `[${xAttr}]`;
-  // update = (el) => {
-    // create cached accessData from resolve(attr(el, xAttr)) if one doesn't exist.
-    // accessData is stored at el[xAttr],
-    // run revise(accessDom, el[xAttr])()
-    // create effect (if it doesn't exist)
-      // pull fresh el[xAttr] inside effect. (needed for reactivity AND helps avoid mutation issues)
-      // effect(revise(el[xAttr],accessDom))
+// select = `[${xAttr}]`;
+// update = (el) => {
+// create cached accessData from resolve(attr(el, xAttr)) if one doesn't exist.
+// accessData is stored at el[xAttr],
+// run revise(accessDom, el[xAttr])()
+// create effect (if it doesn't exist)
+// pull fresh el[xAttr] inside effect. (needed for reactivity AND helps avoid mutation issues)
+// effect(revise(el[xAttr],accessDom))
 // }
 // }
 
-
-const definePlugin = (elAttr, prop) => (model) => {
+const revise = (truthAccessor, compareAccessor) => {
+  const trueValue = truthAccessor();
+  if (!equals(trueValue, compareAccessor())) {
+    compareAccessor(trueValue);
+    console.log("settingHTML", trueValue, compareAccessor());
+  }
+};
+const definePlugin = (attr, accessDom) => (model) => {
   const localMap = new Map();
-
   return {
-    select: `[${elAttr}]`,
+    select: `[${attr}]`,
     update: (el) => {
-      if (el.isConnected && el.hasAttribute(elAttr)) {
-        attr.resolve(elAttr, model)(el);
-        // DOM change will update Data
-        const resolver = el[elAttr];
-        if (resolver() != el[prop]) resolver(el[prop]);
+      if (el.isConnected && el.hasAttribute(attr)) {
+        // Dom updates Data
+        revise(accessDom(el), resolve.path(attr, model)(el));
         // set up reactive effect
         if (!localMap.has(el)) {
-          // Data change will update the DOM
-          const fx = effect(() => {
-            const resolver = el[elAttr];
-            if (resolver() != el[prop]) el[prop] = resolver();
-          });
-          localMap.set(el, fx);
+          // Data updates Dom
+          const thenRevise = () => {
+            // needed to set up reactivity
+            el[attr]();
+            tick(() => revise(el[attr], accessDom(el)))();
+          };
+          then(effect)(thenRevise).then((fx) => localMap.set(el, fx));
         }
       } else {
         // stop applying the reactive effect on the element

@@ -89,6 +89,7 @@ const onDom = async (c) => {
     loop(queryElement)(state.query);
     loop(matchElement)(state.match);
     loop(queueAncestors)(state.queue);
+    // console.log(state.queue);
     loop(runUpdate)(sortEls(state.queue));
     loop(invoke)(state.after);
     clearRuntime();
@@ -137,6 +138,7 @@ const onDom = async (c) => {
         state.plugins.delete(p);
         state.graph.delete(p);
       },
+      plugins: () => [...state.plugins],
       has: (p) => state.graph.has(p),
     };
     const API = Object.assign(MAIN_FUNCTION, METHODS);

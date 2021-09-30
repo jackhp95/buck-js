@@ -14,6 +14,24 @@ const kebabToCamel = (str) => str.replace(/-./g, (m) => m.toUpperCase()[1]);
 const camelToKebab = (str) =>
   str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
+const falseRE = /^\s*|false|f|no|0||\s*$/i;
+const asBool = (any) => (typeof any === "string" ? !falseRE.test(any) : !!any);
+const equals = (a, b) => {
+  if (a === b) return true;
+
+  if (a instanceof Date && b instanceof Date)
+    return a.getTime() === b.getTime();
+
+  if (!a || !b || (typeof a !== "object" && typeof b !== "object"))
+    return a === b;
+
+  if (a.prototype !== b.prototype) return false;
+
+  const keys = Object.keys(a);
+  if (keys.length !== Object.keys(b).length) return false;
+
+  return keys.every((k) => equals(a[k], b[k]));
+};
 const dotNoteRE = /^[\w|\$|\_][\w|\$|\_|0-9]+/;
 const dotOrBox = (v) =>
   dotNoteRE.test(v) ? `${v}.` : `[${v.replaceAll('"', '\\"')}].`;
@@ -89,7 +107,6 @@ const attrPatternMatch = {
   2: (el, get) => el.getAttribute(get),
   3: (el, get, set) => el.setAttribute(get, set),
 };
-const attrFn = (...args) => attrPatternMatch[args.length](args);
 
 const inlineFunction =
   (attrName, ...argNames) =>
@@ -101,11 +118,11 @@ const inlineFunction =
     return el[attrName](...argValues);
   };
 const cleanPathRE = /^[\.\[]/;
-const inlineResolve = (attrName, obj) => (el) => {
+const inlinePath = (attrName, obj) => (el) => {
   if (!(attrName in el)) {
     const path = el.getAttribute(attrName);
     const cleanPath = cleanPathRE.test(path) ? path : "." + path;
-    
+
     // store the callback function to make non-ref values reactive;
     el[attrName] = Function(
       "maybe",
@@ -123,16 +140,16 @@ const inlineResolve = (attrName, obj) => (el) => {
   return el[attrName];
 };
 
-const inline = {
+const resolve = {
   event: (attrName) => (event) =>
     inlineFunction(attrName, "event")(event.target, event),
   entry: (attrName) => (entry) =>
     inlineFunction(attrName, "entry")(entry.target, entry),
   js: inlineFunction,
-  resolve: inlineResolve,
+  path: inlinePath,
 };
 
-const attr = Object.assign(attrFn, inline);
+const attr = (...args) => attrPatternMatch[args.length](args);
 const cssPatternMatch = {
   2: (el, key) => getComputedStyle(el).getPropertyValue(key),
   3: (el, key, value) => {
@@ -146,16 +163,20 @@ export {
   log,
   QSA,
   QS,
+  resolve,
   asEl,
   sortEls,
   css,
   invoke,
+  equals,
   flattenObject,
   perf,
   attr,
   maybe,
   noop,
   identity,
+  falseRE,
+  asBool,
   kebabToCamel,
   camelToKebab,
 };

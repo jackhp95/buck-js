@@ -19,234 +19,395 @@
             import * as codec from "/src/codec.js";
             setup();
 
-            const model = reactive({});
+            const model = reactive({
+                "title": "Testing",
+                "id": "id",
+                "html": "WOOOO",
+                "text": "RAFDFE",
+                "className": "className",
+                "classList": "classList",
+                "data": "data",
+                "attributes": "attributes",
+                "hidden": "true",
+                "draggable": "draggable",
+                "contentEditable": "contentEditable",
+                "spellcheck": "spellcheck",
+                "autocapitalize": "autocapitalize",
+                "autocomplete": "autocomplete",
+                "autofocus": "autofocus",
+                "accesskey": "accesskey",
+                "enterkeyhint": "enterkeyhint",
+                "inputMode": "inputMode",
+                "tabIndex": "tabIndex",
+                "lang": "lang",
+                "translate": "translate",
+                "dir": "dir"
+            });
             const formValues = (x) => Object.fromEntries(new FormData(x));
             const updateForm = (x) => Object.assign(model, formValues(x));
             loop(updateForm)(QSA("form"));
 
-            Object.assign(window, { updateForm }, { model });
+            Object.assign(window, { updateForm }, { model }, { tick });
 
             const onDomConfig = {
+                debug: true,
                 plugins: [...codec.init(model)]
             };
-            perf(onDom, "onDom")(onDomConfig);
+            !(async () => {
+                const api = await perf(onDom, "onDom")(onDomConfig);
+            })()
         </script>
 
     </head>
 
-    <body class="w-full min-h-screen">
-        <header class="px-4 text-white bg-black md:p-12 lg:p-16">
+    <body class="w-full h-screen flex flex-col">
+        <header class="flex-none p-4 text-white bg-black md:p-12 lg:p-16">
             <h1 class="text-5xl">Reactive HTML</h1>
             <p>onDom in conjunction with @vue/reactive makes a pretty nice way to write reactive HTML.</p>
         </header>
-        <main class="flex max-w-lg mx-auto">
+        <main class="flex-auto flex overflow-hidden relative container mx-auto">
             <form
-                class="flex flex-col"
+                class="h-full flex flex-col overflow-auto m-0"
                 id="_reactiveForm"
-                oninput="updateForm(this)"
+                oninput="tick(updateForm)(this)"
             >
-                <label for="title">title</label>
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value="title"
-                >
-                <label for="id">id</label>
-                <input
-                    type="text"
-                    id="id"
-                    name="id"
-                    value="id"
-                >
-                <label for="html">html</label>
-                <input
-                    type="text"
-                    id="html"
-                    name="html"
-                    value="html"
-                >
-                <label for="text">text</label>
-                <input
-                    type="text"
-                    id="text"
-                    name="text"
-                    value="text"
-                >
-                <label for="className">className</label>
-                <input
-                    type="text"
-                    id="className"
-                    name="className"
-                    value="className"
-                >
-                <label for="classList">classList</label>
-                <input
-                    type="text"
-                    id="classList"
-                    name="classList"
-                    value="classList"
-                >
-                <label for="data">data</label>
-                <input
-                    type="text"
-                    id="data"
-                    name="data"
-                    value="data"
-                >
-                <label for="attributes">attributes</label>
-                <input
-                    type="text"
-                    id="attributes"
-                    name="attributes"
-                    value="attributes"
-                >
-                <label for="hidden">hidden</label>
-                <input
-                    type="text"
-                    id="hidden"
-                    name="hidden"
-                    value="hidden"
-                >
-                <label for="draggable">draggable</label>
-                <input
-                    type="text"
-                    id="draggable"
-                    name="draggable"
-                    value="draggable"
-                >
-                <label for="contentEditable">contentEditable</label>
-                <input
-                    type="text"
-                    id="contentEditable"
-                    name="contentEditable"
-                    value="contentEditable"
-                >
-                <label for="spellcheck">spellcheck</label>
-                <input
-                    type="text"
-                    id="spellcheck"
-                    name="spellcheck"
-                    value="spellcheck"
-                >
-                <label for="autocapitalize">autocapitalize</label>
-                <input
-                    type="text"
-                    id="autocapitalize"
-                    name="autocapitalize"
-                    value="autocapitalize"
-                >
-                <label for="autocomplete">autocomplete</label>
-                <input
-                    type="text"
-                    id="autocomplete"
-                    name="autocomplete"
-                    value="autocomplete"
-                >
-                <label for="autofocus">autofocus</label>
-                <input
-                    type="text"
-                    id="autofocus"
-                    name="autofocus"
-                    value="autofocus"
-                >
-                <label for="accesskey">accesskey</label>
-                <input
-                    type="text"
-                    id="accesskey"
-                    name="accesskey"
-                    value="accesskey"
-                >
-                <label for="enterkeyhint">enterkeyhint</label>
-                <input
-                    type="text"
-                    id="enterkeyhint"
-                    name="enterkeyhint"
-                    value="enterkeyhint"
-                >
-                <label for="inputMode">inputMode</label>
-                <input
-                    type="text"
-                    id="inputMode"
-                    name="inputMode"
-                    value="inputMode"
-                >
-                <label for="tabIndex">tabIndex</label>
-                <input
-                    type="text"
-                    id="tabIndex"
-                    name="tabIndex"
-                    value="tabIndex"
-                >
-                <label for="lang">lang</label>
-                <input
-                    type="text"
-                    id="lang"
-                    name="lang"
-                    value="lang"
-                >
-                <label for="translate">translate</label>
-                <input
-                    type="text"
-                    id="translate"
-                    name="translate"
-                    value="translate"
-                >
-                <label for="dir">dir</label>
-                <input
-                    type="text"
-                    id="dir"
-                    name="dir"
-                    value="dir"
-                >
+                <ul class="flex flex-col gap-2 p-2 m-0">
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="title"
+                        >title</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="title"
+                            name="title"
+                            value="title"
+                            x-value="title"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="id"
+                        >id</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="id"
+                            name="id"
+                            value="id"
+                            x-value="id"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="html"
+                        >html</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="html"
+                            name="html"
+                            value="html"
+                            x-value="html"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="text"
+                        >text</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="text"
+                            name="text"
+                            value="text"
+                            x-value="text"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="className"
+                        >className</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="className"
+                            name="className"
+                            value="className"
+                            x-value="className"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="classList"
+                        >classList</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="classList"
+                            name="classList"
+                            value="classList"
+                            x-value="classList"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="data"
+                        >data</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="data"
+                            name="data"
+                            value="data"
+                            x-value="data"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="attributes"
+                        >attributes</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="attributes"
+                            name="attributes"
+                            value="attributes"
+                            x-value="attributes"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="hidden"
+                        >hidden</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="hidden"
+                            name="hidden"
+                            value="hidden"
+                            x-value="hidden"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="draggable"
+                        >draggable</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="draggable"
+                            name="draggable"
+                            value="draggable"
+                            x-value="draggable"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="contentEditable"
+                        >contentEditable</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="contentEditable"
+                            name="contentEditable"
+                            value="contentEditable"
+                            x-value="contentEditable"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="spellcheck"
+                        >spellcheck</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="spellcheck"
+                            name="spellcheck"
+                            value="spellcheck"
+                            x-value="spellcheck"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="autocapitalize"
+                        >autocapitalize</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="autocapitalize"
+                            name="autocapitalize"
+                            value="autocapitalize"
+                            x-value="autocapitalize"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="autocomplete"
+                        >autocomplete</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="autocomplete"
+                            name="autocomplete"
+                            value="autocomplete"
+                            x-value="autocomplete"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="autofocus"
+                        >autofocus</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="autofocus"
+                            name="autofocus"
+                            value="autofocus"
+                            x-value="autofocus"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="accesskey"
+                        >accesskey</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="accesskey"
+                            name="accesskey"
+                            value="accesskey"
+                            x-value="accesskey"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="enterkeyhint"
+                        >enterkeyhint</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="enterkeyhint"
+                            name="enterkeyhint"
+                            value="enterkeyhint"
+                            x-value="enterkeyhint"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="inputMode"
+                        >inputMode</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="inputMode"
+                            name="inputMode"
+                            value="inputMode"
+                            x-value="inputMode"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="tabIndex"
+                        >tabIndex</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="tabIndex"
+                            name="tabIndex"
+                            value="tabIndex"
+                            x-value="tabIndex"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="lang"
+                        >lang</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="lang"
+                            name="lang"
+                            value="lang"
+                            x-value="lang"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="translate"
+                        >translate</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="translate"
+                            name="translate"
+                            value="translate"
+                            x-value="translate"
+                        >
+                    </li>
+                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                        <label
+                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            for="dir"
+                        >dir</label>
+                        <input
+                            type="text"
+                            class="p-2 border-t bg-white"
+                            id="dir"
+                            name="dir"
+                            value="dir"
+                            x-value="dir"
+                        >
+                    </li>
+                </ul>
             </form>
             <output class="flex-auto">
-                <dl>
-                    <dt>title</dt>
-                    <dd x-title="title">title</dd>
-                    <dt>id</dt>
-                    <dd x-id="id">id</dd>
-                    <dt>html</dt>
-                    <dd x-html="html">html</dd>
-                    <dt>text</dt>
-                    <dd x-text="text">text</dd>
-                    <dt>className</dt>
-                    <dd x-className="className">className</dd>
-                    <dt>classList</dt>
-                    <dd x-classList="classList">classList</dd>
-                    <dt>data</dt>
-                    <dd x-data="data">data</dd>
-                    <dt>attributes</dt>
-                    <dd x-attributes="attributes">attributes</dd>
-                    <dt>hidden</dt>
-                    <dd x-hidden="hidden">hidden</dd>
-                    <dt>draggable</dt>
-                    <dd x-draggable="draggable">draggable</dd>
-                    <dt>contentEditable</dt>
-                    <dd x-contentEditable="contentEditable">contentEditable</dd>
-                    <dt>spellcheck</dt>
-                    <dd x-spellcheck="spellcheck">spellcheck</dd>
-                    <dt>autocapitalize</dt>
-                    <dd x-autocapitalize="autocapitalize">autocapitalize</dd>
-                    <dt>autocomplete</dt>
-                    <dd x-autocomplete="autocomplete">autocomplete</dd>
-                    <dt>autofocus</dt>
-                    <dd x-autofocus="autofocus">autofocus</dd>
-                    <dt>accesskey</dt>
-                    <dd x-accesskey="accesskey">accesskey</dd>
-                    <dt>enterkeyhint</dt>
-                    <dd x-enterkeyhint="enterkeyhint">enterkeyhint</dd>
-                    <dt>inputMode</dt>
-                    <dd x-inputMode="inputMode">inputMode</dd>
-                    <dt>tabIndex</dt>
-                    <dd x-tabIndex="tabIndex">tabIndex</dd>
-                    <dt>lang</dt>
-                    <dd x-lang="lang">lang</dd>
-                    <dt>translate</dt>
-                    <dd x-translate="translate">translate</dd>
-                    <dt>dir</dt>
-                    <dd x-dir="dir">dir</dd>
-                </dl>
+                <div
+                    x-title="title"
+                    x-id="id"
+                    x-html="html"
+                    x-text="text"
+                    x-className="className"
+                    x-classList="classList"
+                    x-data="data"
+                    x-attributes="attributes"
+                    x-hidden="hidden"
+                    x-draggable="draggable"
+                    x-contentEditable="contentEditable"
+                    x-spellcheck="spellcheck"
+                    x-autocapitalize="autocapitalize"
+                    x-autocomplete="autocomplete"
+                    x-autofocus="autofocus"
+                    x-accesskey="accesskey"
+                    x-enterkeyhint="enterkeyhint"
+                    x-inputMode="inputMode"
+                    x-tabIndex="tabIndex"
+                    x-lang="lang"
+                    x-translate="translate"
+                    x-dir="dir"
+                >
+                </div>
             </output>
         </main>
     </body>
