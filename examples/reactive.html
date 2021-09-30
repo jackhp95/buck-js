@@ -60,320 +60,271 @@
 
     </head>
 
-    <body class="w-full h-screen flex flex-col">
+    <body class="flex flex-col w-full h-screen">
         <header class="flex-none p-4 text-white bg-black md:p-12 lg:p-16">
             <h1 class="text-5xl">Reactive HTML</h1>
             <p>onDom in conjunction with @vue/reactive makes a pretty nice way to write reactive HTML.</p>
         </header>
-        <main class="flex-auto flex overflow-hidden relative container mx-auto">
+        <main class="container relative flex flex-auto mx-auto overflow-hidden">
             <form
-                class="h-full flex flex-col overflow-auto m-0"
+                class="flex flex-col h-full m-0 overflow-auto"
                 id="_reactiveForm"
-                oninput="tick(updateForm)(this)"
+                onchange="tick(updateForm)(this)"
             >
                 <ul class="flex flex-col gap-2 p-2 m-0">
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="title"
                         >title</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="title"
                             name="title"
                             value="title"
                             x-value="title"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="id"
                         >id</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="id"
                             name="id"
                             value="id"
                             x-value="id"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="html"
                         >html</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="html"
                             name="html"
                             value="html"
                             x-value="html"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="text"
                         >text</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="text"
                             name="text"
                             value="text"
                             x-value="text"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="className"
                         >className</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="className"
                             name="className"
                             value="className"
                             x-value="className"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
-                            for="classList"
-                        >classList</label>
-                        <input
-                            type="text"
-                            class="p-2 border-t bg-white"
-                            id="classList"
-                            name="classList"
-                            value="classList"
-                            x-value="classList"
-                        >
-                    </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
-                        <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
-                            for="data"
-                        >data</label>
-                        <input
-                            type="text"
-                            class="p-2 border-t bg-white"
-                            id="data"
-                            name="data"
-                            value="data"
-                            x-value="data"
-                        >
-                    </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
-                        <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
-                            for="attributes"
-                        >attributes</label>
-                        <input
-                            type="text"
-                            class="p-2 border-t bg-white"
-                            id="attributes"
-                            name="attributes"
-                            value="attributes"
-                            x-value="attributes"
-                        >
-                    </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
-                        <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="hidden"
                         >hidden</label>
                         <input
-                            type="text"
-                            class="p-2 border-t bg-white"
+                            type="checkbox"
+                            class="p-2 bg-white border-t"
                             id="hidden"
                             name="hidden"
-                            value="hidden"
-                            x-value="hidden"
+                            x-checked="hidden"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="draggable"
                         >draggable</label>
                         <input
-                            type="text"
-                            class="p-2 border-t bg-white"
+                            type="checkbox"
+                            class="p-2 bg-white border-t"
                             id="draggable"
                             name="draggable"
-                            value="draggable"
-                            x-value="draggable"
+                            x-checked="draggable"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="contentEditable"
                         >contentEditable</label>
                         <input
-                            type="text"
-                            class="p-2 border-t bg-white"
+                            type="checkbox"
+                            class="p-2 bg-white border-t"
                             id="contentEditable"
                             name="contentEditable"
-                            value="contentEditable"
-                            x-value="contentEditable"
+                            x-checked="contentEditable"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="spellcheck"
                         >spellcheck</label>
                         <input
-                            type="text"
-                            class="p-2 border-t bg-white"
+                            type="checkbox"
+                            class="p-2 bg-white border-t"
                             id="spellcheck"
                             name="spellcheck"
-                            value="spellcheck"
-                            x-value="spellcheck"
+                            x-checked="spellcheck"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="autocapitalize"
                         >autocapitalize</label>
                         <input
-                            type="text"
-                            class="p-2 border-t bg-white"
+                            type="checkbox"
+                            class="p-2 bg-white border-t"
                             id="autocapitalize"
                             name="autocapitalize"
-                            value="autocapitalize"
-                            x-value="autocapitalize"
+                            x-checked="autocapitalize"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="autocomplete"
                         >autocomplete</label>
                         <input
-                            type="text"
-                            class="p-2 border-t bg-white"
+                            type="checkbox"
+                            class="p-2 bg-white border-t"
                             id="autocomplete"
                             name="autocomplete"
-                            value="autocomplete"
-                            x-value="autocomplete"
+                            x-checked="autocomplete"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="autofocus"
                         >autofocus</label>
                         <input
-                            type="text"
-                            class="p-2 border-t bg-white"
+                            type="checkbox"
+                            class="p-2 bg-white border-t"
                             id="autofocus"
                             name="autofocus"
-                            value="autofocus"
-                            x-value="autofocus"
+                            x-checked="autofocus"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="accesskey"
                         >accesskey</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="accesskey"
                             name="accesskey"
                             value="accesskey"
                             x-value="accesskey"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="enterkeyhint"
                         >enterkeyhint</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="enterkeyhint"
                             name="enterkeyhint"
                             value="enterkeyhint"
                             x-value="enterkeyhint"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="inputMode"
                         >inputMode</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="inputMode"
                             name="inputMode"
                             value="inputMode"
                             x-value="inputMode"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="tabIndex"
                         >tabIndex</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="tabIndex"
                             name="tabIndex"
                             value="tabIndex"
                             x-value="tabIndex"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="lang"
                         >lang</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="lang"
                             name="lang"
                             value="lang"
                             x-value="lang"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="translate"
                         >translate</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="translate"
                             name="translate"
                             value="translate"
                             x-value="translate"
                         >
                     </li>
-                    <li class="flex flex-col border rounded-lg overflow-hidden shadow">
+                    <li class="flex flex-col overflow-hidden border rounded-lg shadow">
                         <label
-                            class="py-1 px-2 tracking-widest text-xs bg-gray-200 text-gray-700 font-bold uppercase"
+                            class="px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
                             for="dir"
                         >dir</label>
                         <input
                             type="text"
-                            class="p-2 border-t bg-white"
+                            class="p-2 bg-white border-t"
                             id="dir"
                             name="dir"
                             value="dir"
@@ -388,13 +339,13 @@
                     x-id="id"
                     x-html="html"
                     x-text="text"
-                    x-className="className"
+                    x-class-name="className"
                     x-classList="classList"
                     x-data="data"
                     x-attributes="attributes"
                     x-hidden="hidden"
                     x-draggable="draggable"
-                    x-contentEditable="contentEditable"
+                    x-content-editable="contentEditable"
                     x-spellcheck="spellcheck"
                     x-autocapitalize="autocapitalize"
                     x-autocomplete="autocomplete"

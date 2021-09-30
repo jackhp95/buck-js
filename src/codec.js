@@ -94,7 +94,6 @@ const revise = (truthAccessor, compareAccessor) => {
   const trueValue = truthAccessor();
   if (!equals(trueValue, compareAccessor())) {
     compareAccessor(trueValue);
-    console.log("settingHTML", trueValue, compareAccessor());
   }
 };
 const definePlugin = (attr, accessDom) => (model) => {
@@ -108,12 +107,8 @@ const definePlugin = (attr, accessDom) => (model) => {
         // set up reactive effect
         if (!localMap.has(el)) {
           // Data updates Dom
-          const thenRevise = () => {
-            // needed to set up reactivity
-            el[attr]();
-            tick(() => revise(el[attr], accessDom(el)))();
-          };
-          then(effect)(thenRevise).then((fx) => localMap.set(el, fx));
+          const fx = effect(() => revise(el[attr], accessDom(el)))
+          localMap.set(el, fx);
         }
       } else {
         // stop applying the reactive effect on the element

@@ -254,11 +254,12 @@ const element = {
   text: accessor.Value("textContent"),
   className: accessor.String("className"),
   // Obj
-  classList: accessor.Array("classList"),
-  data: accessor.Object("dataset"),
-  attributes: accessor.Attributes,
+  // classList: accessor.Array("classList"),
+  // data: accessor.Object("dataset"),
+  // attributes: accessor.Attributes,
   // bool
   hidden: accessor.Boolean("hidden"),
+  checked: accessor.Boolean("checked"),
   draggable: accessor.Boolean("draggable"),
   contentEditable: accessor.Boolean("contenteditable"),
   spellcheck: accessor.Boolean("spellcheck"),

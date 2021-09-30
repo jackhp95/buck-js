@@ -14,8 +14,12 @@ const kebabToCamel = (str) => str.replace(/-./g, (m) => m.toUpperCase()[1]);
 const camelToKebab = (str) =>
   str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
-const falseRE = /^\s*|false|f|no|0||\s*$/i;
-const asBool = (any) => (typeof any === "string" ? !falseRE.test(any) : !!any);
+const falseRE = /^\s*|false|f|no|0|\s*$/i;
+const asBool = (any) => {
+  const x = (typeof any === "string" ? !falseRE.test(any) : !!any);
+  console.log("asBool", any, x);
+  return x
+}
 const equals = (a, b) => {
   if (a === b) return true;
 
@@ -130,11 +134,10 @@ const inlinePath = (attrName, obj) => (el) => {
       `return maybe((...a) => {
           if (a.length) {
             const [value] = a;
-            log(value);
             obj${cleanPath} = value;
           }
           return obj${cleanPath};
-        });`
+        }, () => console.error("failed to resolve ${path}"));`
     )(maybe, obj);
   }
   return el[attrName];
