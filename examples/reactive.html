@@ -142,6 +142,15 @@
                             x-value="className"
                         >
                     </li>
+                    <p>
+                        presence is uncertain for checkboxes.
+                        this complicates the model. existence is truthy.
+                        omission is falsey. I need to determine the BEST way to handle this.
+                        - do I make the form model immutable? 
+                        - do I check for checkboxes and state each formUpdate?
+                        - do I diff the new form with the old form and delete the old props?
+                        - do I include all checkboxes even if their value doesn't exist?
+                    </p>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
                         <label
                             class="flex-auto px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
