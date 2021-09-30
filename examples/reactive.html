@@ -19,30 +19,7 @@
             import * as codec from "/src/codec.js";
             setup();
 
-            const model = reactive({
-                "title": "Testing",
-                "id": "id",
-                "html": "WOOOO",
-                "text": "RAFDFE",
-                "className": "className",
-                "classList": "classList",
-                "data": "data",
-                "attributes": "attributes",
-                "hidden": "true",
-                "draggable": "draggable",
-                "contentEditable": "contentEditable",
-                "spellcheck": "spellcheck",
-                "autocapitalize": "autocapitalize",
-                "autocomplete": "autocomplete",
-                "autofocus": "autofocus",
-                "accesskey": "accesskey",
-                "enterkeyhint": "enterkeyhint",
-                "inputMode": "inputMode",
-                "tabIndex": "tabIndex",
-                "lang": "lang",
-                "translate": "translate",
-                "dir": "dir"
-            });
+            const model = reactive({});
             const formValues = (x) => Object.fromEntries(new FormData(x));
             const updateForm = (x) => Object.assign(model, formValues(x));
             loop(updateForm)(QSA("form"));
@@ -65,6 +42,33 @@
             <h1 class="text-5xl">Reactive HTML</h1>
             <p>onDom in conjunction with @vue/reactive makes a pretty nice way to write reactive HTML.</p>
         </header>
+        <aside>
+            <details>
+                <summary>notes</summary>
+                <h2>Scope, Ref, and Each</h2>
+                <p>Next part to introduce once the element codecs are done is scope/ref/each</p>
+                <p>All of which would basically use the same exact code. The resolver.path would find the
+                    el.closest("[x-scope][x-ref][x-each]") and prepend to the child paths.</p>
+                <p>if a path starts with a "." that indicates it's nested and needs a parent, the parent would then
+                    check if its value starts with ".", etc.</p>
+                    <p>These plugins would mutate the element by providing props which update to indicate relevant info</p>
+                    <p>each = { index, first, last, key, value }</p>
+                    <p>scope = { parent, child, siblings }</p>
+                    <p>ref = { parent, child, siblings }</p>
+                <h2>Disappearing Checkboxes</h2>
+                <p>
+                    presence is uncertain for checkboxes.
+                    this complicates the model. existence is truthy.
+                    omission is falsey. I need to determine the BEST way to handle this.
+                </p>
+                <ul>
+                    <li>do I make the form model immutable?</li>
+                    <li>do I check for checkboxes and state each formUpdate?</li>
+                    <li>do I diff the new form with the old form and delete the old props?</li>
+                    <li>do I include all checkboxes even if their value doesn't exist?</li>
+                </ul>
+            </details>
+        </aside>
         <main class="container relative flex flex-auto mx-auto overflow-hidden">
             <form
                 class="flex flex-col h-full m-0 overflow-auto"
@@ -142,15 +146,6 @@
                             x-value="className"
                         >
                     </li>
-                    <p>
-                        presence is uncertain for checkboxes.
-                        this complicates the model. existence is truthy.
-                        omission is falsey. I need to determine the BEST way to handle this.
-                        - do I make the form model immutable? 
-                        - do I check for checkboxes and state each formUpdate?
-                        - do I diff the new form with the old form and delete the old props?
-                        - do I include all checkboxes even if their value doesn't exist?
-                    </p>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
                         <label
                             class="flex-auto px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
