@@ -10,7 +10,6 @@ import {
   equals,
   perf,
   attr,
-  resolve,
   css,
   maybe,
   noop,
@@ -18,7 +17,6 @@ import {
   asBool,
   kebabToCamel,
   camelToKebab,
-  falseRE,
 } from "./utils.js";
 import { onDom } from "./ondom.js";
 import {
@@ -48,14 +46,12 @@ export {
   perf,
   equals,
   attr,
-  resolve,
   maybe,
   noop,
   invoke,
   identity,
   kebabToCamel,
   camelToKebab,
-  falseRE,
   asBool,
   onDom,
   extendFunction,

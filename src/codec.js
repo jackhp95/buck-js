@@ -1,94 +1,197 @@
 import {
   reactive,
   effect,
-  computed,
+  stop,
 } from "https://jackhpeterson.com/__/esm/@vue/reactivity";
-import {
-  aria,
-  dom,
-  visual,
-  events,
-  microdata,
-  element,
-  input,
-  validation,
-} from "./html.api.js";
+import { aria, attr, dom } from "./html.api.js";
+import { then } from "./orca.js";
 import {
   camelToKebab,
   flattenObject,
-  resolve,
   equals,
+  QSA,
+  QS,
   log,
+  maybe,
   loop,
 } from "./utils.js";
-import { then } from "./orca.js";
 
-// Misc (debug, split, loop.first, loop.last, loop.key, loop.value, filter, min, max, loop.length, sort)
+const memoize =
+  (fn) =>
+  (attrName, ...argNames) =>
+  (el, ...argValues) => {
+    if (!(attrName in el)) {
+      el[attrName] = fn(attrName, ...argNames)(el, ...argValues);
+    }
+    return el[attrName](...argValues);
+  };
 
-// Text Formatting (dates, json, md, currency, encoding)
+// IIFE: Sets up the static parts once, so dynamic parts can be faster.
+const [xTemplate] = ["x-template"];
+const selectorList = ["x-scope", "x-ref", "x-each", "x-key"];
+const [scope, ref, each, key] = selectorList;
+const sel = selectorList.map((a) => `[${a}]`).join();
+
+const getScope = (el, root, attrName) => {
+  const anc = el.closest(sel);
+  if (anc) {
+    // includes statements prevents reccursion on self
+    if (![ref, scope, each, key].includes(attrName) && anc[key])
+      return anc[key]();
+    if (![ref, scope, each].includes(attrName) && anc[each]) return anc[each]();
+    if (![ref, scope].includes(attrName) && anc[scope]) return anc[scope]();
+    if (![ref].includes(attrName) && anc[ref]) return anc[ref]();
+    // all paths have been evaluated on on the current el, so move to parent
+    return getScope(el.parentElement, root, attrName);
+  }
+  return root;
+};
+const isInt = (val) => {
+  const maybeInt = parseInt(val);
+  return !(maybeInt !== maybeInt);
+};
+const inlinePath = (attrName, root) => (el) => {
+  const val = el.getAttribute(attrName);
+  const path = isInt(val) ? `[${val}]` : val;
+  const okFn = `(...a) => a.length ? (obj${path} = a[0]) : obj${path}`;
+  const errFn = `(e) => console.error("failed to resolve ${path} on", obj, "\\nERROR:", e)`;
+  const result = `return maybe( ${okFn}, ${errFn} );`;
+  return Function("maybe", "obj", result)(maybe, getScope(el, root, attrName));
+};
+
+const inlineFn =
+  (attrName, ...argNames) =>
+  (el, ...argValues) =>
+    Function(...argNames, el.getAttribute(attrName)).bind(el);
+
+const resolve = {
+  event: (attrName) => (event) =>
+    memoize(inlineFn)(attrName, "event")(event.target, event),
+  entry: (attrName) => (entry) =>
+    memoize(inlineFn)(attrName, "entry")(entry.target, entry),
+  js: memoize(inlineFn),
+  path: memoize(inlinePath),
+};
+
+const getEachMap = (el) =>
+  QSA.children(el, "*:not(template)").reduce((m, elem) => {
+    const k = elem.getAttribute(key);
+    m.has(k) ? m.get(k).push(elem) : m.set(k, [elem]);
+    return m;
+  }, new Map());
+
+const templateOfEach = (el) => {
+  const childTemplates = QSA.children(el, "template");
+  const idTemplate = QS(`template#${el.getAttribute(xTemplate)}`);
+  const tmpls = [idTemplate, ...childTemplates]
+    .filter((x) => x)
+    .flatMap((t) => [...t.content.children]);
+  return (k) =>
+    tmpls.map((te) => {
+      const x = te.cloneNode(true);
+      x.setAttribute(key, k);
+      return x;
+    });
+};
+
+const insertKeyedChild = (el, domMap, objKeys) => {
+  const templateFor = templateOfEach(el);
+  const appendKeyedEl = (dki) => {
+    const priorKeyEls = domMap.get(objKeys[dki - 1]);
+    const priorEl = priorKeyEls[priorKeyEls.length - 1];
+    return (kel) => priorEl.insertAdjacentElement("afterend", kel);
+  };
+  return (domKey) => {
+    const tmpl = templateFor(domKey);
+    const dki = objKeys.indexOf(domKey);
+    dki ? tmpl.forEach(appendKeyedEl(dki)) : el.prepend(...tmpl);
+    domMap.set(domKey, tmpl);
+  };
+};
+const removeKeyedChild = (domMap) => (domKey) => {
+  const elArr = domMap.get(domKey);
+  elArr.forEach((x) => x.remove());
+  elArr.length = 0;
+  domMap.delete(domKey);
+};
+
+const diffKeys = (el) => {
+  const obj = el[each]();
+  const objKeys = Object.keys(Array.isArray(obj) ? [...obj] : { ...obj });
+  const dom = getEachMap(el);
+  const domKeys = [...dom.keys()];
+  const justDom = domKeys.filter((dk) => !objKeys.includes(dk));
+  const justObj = objKeys.filter((dk) => !domKeys.includes(dk));
+  return { obj, objKeys, dom, domKeys, justDom, justObj };
+};
+const eachToDom = (el) => {
+  const { justDom, justObj, dom, objKeys } = diffKeys(el);
+  justObj.length && justObj.forEach(insertKeyedChild(el, dom, objKeys));
+  justDom.length && justDom.forEach(removeKeyedChild(dom));
+};
+
+const eachToData = (el) => {
+  const { justDom, justObj, obj } = diffKeys(el);
+  justDom.length && justDom.forEach((dk) => (obj[dk] = isInt(dk) ? [] : {}));
+  justObj.length && justObj.forEach((ok) => delete obj[ok]);
+};
 
 // Custom Templating (if, else, each, scope/ref, include, await, )
-
-// One Way Properties (clientHeight, onclick)
-
-// Boolean Properties (Hidden, Required)
-
-// Strange Dual Properties (Value, Id)
-
-// Object Properties (ClassList, Attributes)
-
-// String Properties (ClassName, innerHTML)
-
-// perhaps this should be reworked:
-// resolver should be renamed to access
-// access = (?setNew) = value
-// resolver should JUST mean taking an attribute string, and resolving where that data exists.
-// once you resolve what data your attribute value (string) is referencing, you can access it.
-// 1) Compare dom/data
-// isEq(accessDom(), accessData()) // use vue equality
-// 2) Pull Data from Dom (use _.set or something to create new Data Structures)
-// update = () => compare || accessData(accessDom())
-// 3) Establish Data Binding
-// effect = () => compare || accessDom(accessData())
-//
-// The effect and update api could be unified
-// revise = (truthAccessor, compareAccessor) = () => {
-//    const truth = truthAccessor();
-//    isEq(trueValue, compareAccessor()) || compareAccessor(trueValue);
-// }
-// effect(revise(dataAccessor, domAccessor))
-// update(manageCodec(revise(dataAccessor, domAccessor)))
-//
-// manageCodec tracks the element avoids mem leaks
-// erases removed/irrelevant elements and closes effects
-// only applies revise when relevant.
-//
-// accessData === attr.access =
-// { path: "current attr.resolve"
-// , obj: JSON.parse()
-// , fetch: fetch()
-// , dom: QS(), QSA()
-// , js: inline
-// , method: runs JS method (Safer than inline JS [TEA Msg])
-// }
-// accessDom === prop.access =
-// { String: current definePlugin // { attr: false, prop: true }
-// , Object: dataset
-// , Map: attributes, classlist
-// , Bool: hidden, draggable
-// }
-
-// definePlugin = (xAttr, accessDom, resolve.path) => (model) => {
-// select = `[${xAttr}]`;
-// update = (el) => {
-// create cached accessData from resolve(attr(el, xAttr)) if one doesn't exist.
-// accessData is stored at el[xAttr],
-// run revise(accessDom, el[xAttr])()
-// create effect (if it doesn't exist)
-// pull fresh el[xAttr] inside effect. (needed for reactivity AND helps avoid mutation issues)
-// effect(revise(el[xAttr],accessDom))
-// }
-// }
+const templatePlugins = (prefix) => ({
+  // scope: () => {},
+  // ref: () => {},
+  // if: () => {},
+  // elseif: () => {},
+  // else: () => {},
+  each: (model) => {
+    const localMap = new Map();
+    return {
+      select: `[${each}]`,
+      update: (el) => {
+        if (el.isConnected && el.hasAttribute(each)) {
+          resolve.path(each, model)(el);
+          // Dom updates Data
+          eachToData(el);
+          // set up reactive effect
+          if (!localMap.has(el)) {
+            // Data updates Dom
+            const fx = effect(() => eachToDom(el));
+            localMap.set(el, fx);
+          }
+        } else {
+          // stop applying the reactive effect on the element
+          if (localMap.has(el)) stop(localMap.get(el));
+          // remove the element from storage (avoid mem leak)
+          localMap.delete(el);
+        }
+      },
+    };
+  },
+  key: (model) => {
+    const wasInit = new Set();
+    // Undo Template Data Changes
+    const undo = (el) => {
+      const prior = { ...el[key]() };
+      const undoData = () => Object.assign(el[key](), prior);
+      return then(undoData)();
+    };
+    return {
+      select: `[${key}]`,
+      update: (el) => {
+        if (el.isConnected && el.hasAttribute(key)) {
+          // memoize resolver if needed
+          resolve.path(key, model)(el);
+          wasInit.has(el) || undo(el);
+        } else {
+          wasInit.delete(el);
+        }
+      },
+    };
+  },
+  // include: () => {},
+  // await: () => {},
+  // then: () => {},
+});
 
 const revise = (truthAccessor, compareAccessor) => {
   const trueValue = truthAccessor();
@@ -102,34 +205,36 @@ const definePlugin = (attr, accessDom) => (model) => {
     select: `[${attr}]`,
     update: (el) => {
       if (el.isConnected && el.hasAttribute(attr)) {
+        // memoize resolver if needed
+        resolve.path(attr, model)(el);
         // Dom updates Data
-        revise(accessDom(el), resolve.path(attr, model)(el));
+        revise(accessDom(el), el[attr]);
         // set up reactive effect
         if (!localMap.has(el)) {
           // Data updates Dom
-          const fx = effect(() => revise(el[attr], accessDom(el)))
+          const fx = effect(() => revise(el[attr], accessDom(el)));
           localMap.set(el, fx);
         }
       } else {
         // stop applying the reactive effect on the element
-        if (localMap.has(el)) localMap.get(el).stop();
+        if (localMap.has(el)) stop(localMap.get(el));
         // remove the element from storage (avoid mem leak)
         localMap.delete(el);
       }
     },
   };
 };
-const oneWay = { validation, events, dom };
 
 const plugins = (prefix = "x-") => {
-  const apis = Object.assign({}, { aria }, microdata, element, input);
-  return Object.entries(flattenObject(apis, { join: (x) => `${x}-` })).map(
-    ([a, p]) => {
-      const attr = prefix + camelToKebab(a);
-      const prop = p;
-      return definePlugin(attr, prop);
-    }
-  );
+  const apis = Object.assign({}, { aria }, attr, dom);
+  const apiPlugins = Object.entries(
+    flattenObject(apis, { join: (x) => `${x}-` })
+  ).map(([a, p]) => {
+    const attr = prefix + camelToKebab(a);
+    const prop = p;
+    return definePlugin(attr, prop);
+  });
+  return [...Object.values(templatePlugins(prefix)), ...apiPlugins];
 };
 
 const init = (_config) => {

@@ -4,8 +4,25 @@ const loop = (fn) => (xs) => {
   }
 };
 const log = (x) => (console.log(x), x);
-const QSA = (sel, el = document) => el.querySelectorAll(sel);
-const QS = (sel, el = document) => el.querySelector(sel);
+
+const extendQuery = (filterOrFind) => ({
+  children: (el, sel = "*") =>
+    [...el.children][filterOrFind]((x) => x.matches(sel)),
+  siblings: (el, sel = "*") =>
+    [...el.parentElement.children][filterOrFind]((x) => x.matches(sel)),
+});
+extendQuery.index = (el, sel) => extendQSA.children(el, sel).indexOf(el);
+
+const QSA = Object.assign(
+  (sel, el = document) => el.querySelectorAll(sel),
+  extendQuery("filter")
+);
+
+const QS = Object.assign(
+  (sel, el = document) => el.querySelector(sel),
+  extendQuery("find")
+);
+
 const asEl = (node) => (node.tagName ? node : node.parentElement);
 const invoke = (fn, ...args) => fn(...args);
 const noop = () => {};
@@ -13,6 +30,70 @@ const identity = (x) => x;
 const kebabToCamel = (str) => str.replace(/-./g, (m) => m.toUpperCase()[1]);
 const camelToKebab = (str) =>
   str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+const parseNumber = (value, locales = navigator.languages) => {
+  const example = Intl.NumberFormat(locales).format("1.1");
+  const cleanPattern = new RegExp(`[^-+0-9${example.charAt(1)}]`, "g");
+  const cleaned = value.replace(cleanPattern, "");
+  const normalized = cleaned.replace(example.charAt(1), ".");
+
+  return parseFloat(normalized);
+};
+
+const accessor = {
+  Value:
+    (prop) =>
+    (el) =>
+    (...a) =>
+      a.length ? (el[prop] = a[0]) : el[prop],
+  Number:
+    (prop) =>
+    (el) =>
+    (...a) =>
+      a.length ? (el[prop] = Number(a[0])) : Number(el[prop]),
+  String:
+    (prop) =>
+    (el) =>
+    (...a) =>
+      a.length ? (el[prop] = a[0] || "") : el[prop] || "",
+  Boolean:
+    (prop) =>
+    (el) =>
+    (...a) =>
+      a.length ? (el[prop] = !!a[0]) : !!el[prop],
+  Object:
+    (prop) =>
+    (el) =>
+    (...a) =>
+      a.length ? Object.assign(el[prop], a[0]) : el[prop],
+  Array:
+    (prop) =>
+    (el) =>
+    (...a) =>
+      a.length ? (el[prop] = a[0]) : [...el[prop]],
+  ContentEditable:
+    (el) =>
+    (...a) =>
+      a.length
+        ? (el.contentEditable = a[0] ? "true" : "false")
+        : el.isContentEditable,
+  Attributes:
+    (el) =>
+    (...a) => {
+      const set = () =>
+        Object.entries(a[0]).reduce((obj, [k, v]) => {
+          el.setAttribute(k, v);
+          obj[k] = v;
+          return obj;
+        }, {});
+      const get = () =>
+        [...el.attributes].reduce((obj, x) => {
+          obj[x.name] = x.value;
+          return obj;
+        }, {});
+      return a.length ? set() : get();
+    },
+};
 
 const falseRE = /^\s*|false|f|0|\s*$/i;
 const asBool = (any) => (typeof any === "string" ? !falseRE.test(any) : !!any);
@@ -108,46 +189,6 @@ const attrPatternMatch = {
   3: (el, get, set) => el.setAttribute(get, set),
 };
 
-const inlineFunction =
-  (attrName, ...argNames) =>
-  (el, ...argValues) => {
-    if (!(attrName in el)) {
-      const fn = Function(...argNames, el.getAttribute(attrName)).bind(el);
-      el[attrName] = fn;
-    }
-    return el[attrName](...argValues);
-  };
-const cleanPathRE = /^[\.\[]/;
-const inlinePath = (attrName, obj) => (el) => {
-  if (!(attrName in el)) {
-    const path = el.getAttribute(attrName);
-    const cleanPath = cleanPathRE.test(path) ? path : "." + path;
-
-    // store the callback function to make non-ref values reactive;
-    el[attrName] = Function(
-      "maybe",
-      "obj",
-      `return maybe((...a) => {
-          if (a.length) {
-            const [value] = a;
-            obj${cleanPath} = value;
-          }
-          return obj${cleanPath};
-        }, () => console.error("failed to resolve ${path}"));`
-    )(maybe, obj);
-  }
-  return el[attrName];
-};
-
-const resolve = {
-  event: (attrName) => (event) =>
-    inlineFunction(attrName, "event")(event.target, event),
-  entry: (attrName) => (entry) =>
-    inlineFunction(attrName, "entry")(entry.target, entry),
-  js: inlineFunction,
-  path: inlinePath,
-};
-
 const attr = (...args) => attrPatternMatch[args.length](args);
 const cssPatternMatch = {
   2: (el, key) => getComputedStyle(el).getPropertyValue(key),
@@ -162,7 +203,6 @@ export {
   log,
   QSA,
   QS,
-  resolve,
   asEl,
   sortEls,
   css,
@@ -174,8 +214,8 @@ export {
   maybe,
   noop,
   identity,
-  falseRE,
   asBool,
   kebabToCamel,
   camelToKebab,
+  accessor,
 };

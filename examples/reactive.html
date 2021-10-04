@@ -51,10 +51,10 @@
                     el.closest("[x-scope][x-ref][x-each]") and prepend to the child paths.</p>
                 <p>if a path starts with a "." that indicates it's nested and needs a parent, the parent would then
                     check if its value starts with ".", etc.</p>
-                    <p>These plugins would mutate the element by providing props which update to indicate relevant info</p>
-                    <p>each = { index, first, last, key, value }</p>
-                    <p>scope = { parent, child, siblings }</p>
-                    <p>ref = { parent, child, siblings }</p>
+                <p>These plugins would mutate the element by providing props which update to indicate relevant info</p>
+                <p>each = { index, first, last, key, value }</p>
+                <p>scope = { parent, child, siblings }</p>
+                <p>ref = { parent, child, siblings }</p>
                 <h2>Disappearing Checkboxes</h2>
                 <p>
                     presence is uncertain for checkboxes.
@@ -87,7 +87,7 @@
                             id="title"
                             name="title"
                             value="title"
-                            x-value="title"
+                            x-value=".title"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -101,7 +101,7 @@
                             id="id"
                             name="id"
                             value="id"
-                            x-value="id"
+                            x-value=".id"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -115,7 +115,7 @@
                             id="html"
                             name="html"
                             value="html"
-                            x-value="html"
+                            x-value=".html"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -129,7 +129,7 @@
                             id="text"
                             name="text"
                             value="text"
-                            x-value="text"
+                            x-value=".text"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -143,7 +143,7 @@
                             id="className"
                             name="className"
                             value="className"
-                            x-value="className"
+                            x-value=".className"
                         >
                     </li>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
@@ -156,7 +156,8 @@
                             class="p-2 ml-2 mr-1 bg-white border-t"
                             id="hidden"
                             name="hidden"
-                            x-checked="hidden"
+                            x-checked=".hidden"
+                            onchange="model.hidden = this.checked"
                         >
                     </li>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
@@ -169,20 +170,22 @@
                             class="p-2 ml-2 mr-1 bg-white border-t"
                             id="draggable"
                             name="draggable"
-                            x-checked="draggable"
+                            x-checked=".draggable"
+                            onchange="model.draggable = this.checked"
                         >
                     </li>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
                         <label
                             class="flex-auto px-2 py-1 text-xs font-bold tracking-widest text-gray-700 uppercase bg-gray-200"
-                            for="contentEditable"
-                        >contentEditable</label>
+                            for="contenteditable"
+                        >contenteditable</label>
                         <input
                             type="checkbox"
                             class="p-2 ml-2 mr-1 bg-white border-t"
-                            id="contentEditable"
-                            name="contentEditable"
-                            x-checked="contentEditable"
+                            id="contenteditable"
+                            name="contenteditable"
+                            x-checked=".contenteditable"
+                            onchange="model.contenteditable = this.checked"
                         >
                     </li>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
@@ -195,7 +198,8 @@
                             class="p-2 ml-2 mr-1 bg-white border-t"
                             id="spellcheck"
                             name="spellcheck"
-                            x-checked="spellcheck"
+                            x-checked=".spellcheck"
+                            onchange="model.spellcheck = this.checked"
                         >
                     </li>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
@@ -208,7 +212,8 @@
                             class="p-2 ml-2 mr-1 bg-white border-t"
                             id="autocapitalize"
                             name="autocapitalize"
-                            x-checked="autocapitalize"
+                            x-checked=".autocapitalize"
+                            onchange="model.autocapitalize = this.checked"
                         >
                     </li>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
@@ -221,7 +226,8 @@
                             class="p-2 ml-2 mr-1 bg-white border-t"
                             id="autocomplete"
                             name="autocomplete"
-                            x-checked="autocomplete"
+                            x-checked=".autocomplete"
+                            onchange="model.autocomplete = this.checked"
                         >
                     </li>
                     <li class="flex flex-row-reverse overflow-hidden border rounded-lg shadow">
@@ -234,7 +240,8 @@
                             class="p-2 ml-2 mr-1 bg-white border-t"
                             id="autofocus"
                             name="autofocus"
-                            x-checked="autofocus"
+                            x-checked=".autofocus"
+                            onchange="model.autofocus = this.checked"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -248,7 +255,7 @@
                             id="accesskey"
                             name="accesskey"
                             value="accesskey"
-                            x-value="accesskey"
+                            x-value=".accesskey"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -262,7 +269,7 @@
                             id="enterkeyhint"
                             name="enterkeyhint"
                             value="enterkeyhint"
-                            x-value="enterkeyhint"
+                            x-value=".enterkeyhint"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -276,7 +283,7 @@
                             id="inputMode"
                             name="inputMode"
                             value="inputMode"
-                            x-value="inputMode"
+                            x-value=".inputMode"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -290,7 +297,7 @@
                             id="tabIndex"
                             name="tabIndex"
                             value="tabIndex"
-                            x-value="tabIndex"
+                            x-value=".tabIndex"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -304,7 +311,7 @@
                             id="lang"
                             name="lang"
                             value="lang"
-                            x-value="lang"
+                            x-value=".lang"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -318,7 +325,7 @@
                             id="translate"
                             name="translate"
                             value="translate"
-                            x-value="translate"
+                            x-value=".translate"
                         >
                     </li>
                     <li class="flex flex-col overflow-hidden border rounded-lg shadow">
@@ -332,37 +339,40 @@
                             id="dir"
                             name="dir"
                             value="dir"
-                            x-value="dir"
+                            x-value=".dir"
                         >
                     </li>
                 </ul>
             </form>
             <output class="flex-auto">
                 <div
-                    x-title="title"
-                    x-id="id"
-                    x-html="html"
-                    x-text="text"
-                    x-class-name="className"
-                    x-classList="classList"
-                    x-data="data"
-                    x-attributes="attributes"
-                    x-hidden="hidden"
-                    x-draggable="draggable"
-                    x-content-editable="contentEditable"
-                    x-spellcheck="spellcheck"
-                    x-autocapitalize="autocapitalize"
-                    x-autocomplete="autocomplete"
-                    x-autofocus="autofocus"
-                    x-accesskey="accesskey"
-                    x-enterkeyhint="enterkeyhint"
-                    x-inputMode="inputMode"
-                    x-tabIndex="tabIndex"
-                    x-lang="lang"
-                    x-translate="translate"
-                    x-dir="dir"
-                >
-                </div>
+                    x-title=".title"
+                    x-id=".id"
+                    x-html=".html"
+                    x-text=".text"
+                    x-class-name=".className"
+                    x-classList=".classList"
+                    x-data=".data"
+                    x-attributes=".attributes"
+                    x-hidden=".hidden"
+                    x-draggable=".draggable"
+                    x-contenteditable=".contenteditable"
+                    x-spellcheck=".spellcheck"
+                    x-autocapitalize=".autocapitalize"
+                    x-autocomplete=".autocomplete"
+                    x-autofocus=".autofocus"
+                    x-accesskey=".accesskey"
+                    x-enterkeyhint=".enterkeyhint"
+                    x-inputMode=".inputMode"
+                    x-tabIndex=".tabIndex"
+                    x-lang=".lang"
+                    x-translate=".translate"
+                    x-dir=".dir"
+                    class="h-full flex items-center justify-center"
+                ><span
+                        class="p-8 bg-black rounded-3xl text-white text-5xl font-bold border-blue-500 border-8"
+                        id="helloWorld"
+                    >Hello World!</span></div>
             </output>
         </main>
     </body>

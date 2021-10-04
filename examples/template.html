@@ -1,0 +1,66 @@
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta
+            http-equiv="X-UA-Compatible"
+            content="IE=edge"
+        >
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+        <title>Template</title>
+
+        <script type="module">
+            import { reactive, effect, computed } from 'https://jackhpeterson.com/__/esm/@vue/reactivity';
+            import { setup } from "https://jackhpeterson.com/__/esm/twind/shim.js";
+            import { onDom, perf, QSA, QS, loop, attr, tick } from "/src/index.js";
+            import * as codec from "/src/codec.js";
+            setup();
+
+            const model = reactive({
+                people: []
+            });
+            const formValues = (x) => Object.fromEntries(new FormData(x));
+            const updateForm = (x) => Object.assign(model, formValues(x));
+            loop(updateForm)(QSA("form"));
+
+            Object.assign(window, { updateForm }, { model }, { tick });
+
+            const onDomConfig = {
+                debug: true,
+                plugins: [...codec.init(model)]
+            };
+            !(async () => {
+                const api = await perf(onDom, "onDom")(onDomConfig);
+                model.people = [
+                    { name: "bob" },
+                    { name: "ted" },
+                    { name: "barb" }
+                ]
+            })()
+        </script>
+
+    </head>
+
+    <body class="flex flex-col w-full h-screen">
+        <header class="flex-none p-4 text-white bg-black md:p-12 lg:p-16">
+            <h1 class="text-5xl">Template HTML</h1>
+            <p>onDom in conjunction with @vue/reactive makes a pretty nice way to write templates in HTML.</p>
+        </header>
+        <ul
+            x-each=".people"
+            class="flex flex-col gap-2 p-2 m-0"
+        >
+            <template>
+                <li><span x-text=".name">Billy</span></li>
+            </template>
+        </ul>
+        <h2>Roadmap</h2>
+        <p>This works moderately well, adding nodes, well, adds nodes.</p>
+        <p>Removing nodes, however, doesn't work super great. play around with .unshift() to see why.</p>
+        <p>I know there is an elegant solution, but I still got to figure out what that is.</p>
+    </body>
+
+</html>
