@@ -51,16 +51,46 @@
         </header>
         <ul
             x-each=".people"
-            class="flex flex-col gap-2 p-2 m-0"
+            class="flex flex-col gap-2 p-4 m-0"
         >
             <template>
-                <li><span x-text=".name">Billy</span></li>
+                <li class="shadow rounded p-4 flex justify-between">
+                    <span x-text=".name">Billy</span>
+                    <button
+                        type="button"
+                        onclick="console.log(this); this.parentElement.remove();"
+                    >
+                        &times;
+                    </button>
+                </li>
             </template>
         </ul>
-        <h2>Roadmap</h2>
-        <p>This works moderately well, adding nodes, well, adds nodes.</p>
-        <p>Removing nodes, however, doesn't work super great. play around with .unshift() to see why.</p>
-        <p>I know there is an elegant solution, but I still got to figure out what that is.</p>
+        <form class="flex flex-col gap-2 p-4">
+            <input
+                type="text"
+                id="new_person"
+                class="px-4 py-3 border rounded"
+                placeholder="New Person"
+            />
+            <menu class="flex m-0 p-0 gap-4">
+                <button
+                    type="button"
+                    class="rounded bg-blue-500 text-white px-4 py-2"
+                    onclick="model.people.unshift({name: new_person.value})"
+                >Prepend</button>
+                <button
+                    type="button"
+                    class="rounded bg-blue-500 text-white px-4 py-2"
+                    onclick="model.people.push({name: new_person.value})"
+                >Append</button>
+            </menu>
+        </form>
+        <article class="gap-4 p-4">
+            <h2 class="text-2xl font-bold">Roadmap</h2>
+            <p>This works moderately well, adding nodes, well, adds nodes.</p>
+            <p>Removing nodes, however, doesn't work super great. play around with .unshift() to see why.</p>
+            <p>I know there is an elegant solution, but I still got to figure out what that is.</p>
+        </article>
     </body>
 
 </html>

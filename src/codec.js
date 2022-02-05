@@ -171,8 +171,11 @@ const templatePlugins = (prefix) => ({
     const wasInit = new Set();
     // Undo Template Data Changes
     const undo = (el) => {
-      const prior = { ...el[key]() };
-      const undoData = () => Object.assign(el[key](), prior);
+      const curr = el[key]();
+      // escape if there's nothing to undo 
+      if (!curr) return;
+      const prior = { ...curr };
+      const undoData = () => Object.assign(curr, prior);
       return then(undoData)();
     };
     return {
@@ -243,4 +246,4 @@ const init = (_config) => {
   return c.plugins(c.prefix).map((fn) => fn(model));
 };
 
-export { init, plugins };
+export { init, plugins, resolve };

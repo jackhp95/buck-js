@@ -14,7 +14,9 @@
 
         <script type="module">
             import { setup } from "https://jackhpeterson.com/__/esm/twind/shim.js";
-            import { onDom, perf, QSA, QS, loop, resolve } from "/src/index.js";
+            import { onDom, perf, QSA, QS, loop } from "/src/index.js";
+            import { resolve } from "/src/codec.js";
+            
             setup();
             const viewportPlugins = () => {
                 // X Center 
