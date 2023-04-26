@@ -4,7 +4,7 @@ import {
   stop,
 } from "https://jackhpeterson.com/__/esm/@vue/reactivity";
 import { aria, attr, dom } from "./html.api.js";
-import { then } from "./orca.js";
+// import { then } from "./orca.js";
 import {
   camelToKebab,
   flattenObject,
@@ -176,7 +176,7 @@ const templatePlugins = (prefix) => ({
       if (!curr) return;
       const prior = { ...curr };
       const undoData = () => Object.assign(curr, prior);
-      return then(undoData)();
+      // return then(undoData)();
     };
     return {
       select: `[${key}]`,

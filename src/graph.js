@@ -1,5 +1,4 @@
 const Graph = (entries = []) => {
-  const err = (...xs) => console.warn(...xs);
   const g = new Map(entries);
   return {
     clear: () => g.clear(),
@@ -63,9 +62,9 @@ const Graph = (entries = []) => {
       g.forEach((vs, k) => vs.forEach((v) => e.push([k, v])));
       return e;
     },
-    tidy: () => {
+    tidy: (err) => {
       g.entries().map(([k, vs]) => {
-        loop((v) => {
+        vs.forEach((v) => {
           if (g.has(v)) {
             if (!g.get(v).has(k)) {
               err("non-bidirectional | exists in set, not in map: ", k);
@@ -73,7 +72,7 @@ const Graph = (entries = []) => {
           } else {
             err("non-bidirectional | exists in map, not in set: ", v);
           }
-        })(vs);
+        });
       });
     },
   };

@@ -350,7 +350,7 @@ const dom = {
 };
 
 // handy, but _generally_ one way.
-//cmaybe triggering a scroll,
+// maybe triggering a scroll,
 // but triggering a click or shake doesn't make sense
 const events = [
   "onabsolutedeviceorientation",

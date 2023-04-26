@@ -8,8 +8,11 @@
     "utils": "esbuild src/utils.js --bundle --minify --sourcemap --format='esm' --outfile='dist/utils.js'",
     "graph": "esbuild src/graph.js --bundle --minify --sourcemap --format='esm' --outfile='dist/graph.js'",
     "ondom": "esbuild src/ondom.js --bundle --minify --sourcemap --format='esm' --outfile='dist/ondom.js'",
+    "codec": "esbuild src/codec.js --bundle --minify --sourcemap --format='esm' --outfile='dist/codec.js'",
     "orca": "esbuild src/orca.js --bundle --minify --sourcemap --format='esm' --outfile='dist/orca.js'",
-    "all": "npm run graph && npm run ondom && npm run utils && npm run index && npm run orca"
+    "ssr": "esbuild src/ssr.js --bundle --minify --sourcemap --format='esm' --outfile='dist/ssr.js'",
+    "html.api": "esbuild src/html.api.js --bundle --minify --sourcemap --format='esm' --outfile='dist/html.api.js'",
+    "all": "npm run graph && npm run ondom && npm run utils && npm run index && npm run codec && npm run orca && npm run ssr && npm run html.api"
   },
   "repository": {
     "type": "git",
